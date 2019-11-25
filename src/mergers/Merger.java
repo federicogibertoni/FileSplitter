@@ -16,7 +16,7 @@ public class Merger {
 
     public void merge() {
         String nomeFile = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1);
-        String nomeFileFinale = //"\\"+"finale"+/*File.pathSeparator*/ "\\"+
+        String nomeFileFinale = //"\\"+"finale"+/*File.separator*/ "\\"+
                 startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1) + "fine";
 
         int c = 1;
@@ -50,6 +50,11 @@ public class Merger {
                 e.printStackTrace();
             }
         }
-
+        try {
+            fis.close();
+            output.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
