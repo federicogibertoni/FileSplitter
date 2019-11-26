@@ -19,7 +19,8 @@ public class Merger {
         String nomeFileFinale = //"\\"+"finale"+/*File.separator*/ "\\"+
                 startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1) + "fine";
 
-        int c = 1;
+        int c = 1, dimBuf = 8192;
+        byte[] buf = new byte[dimBuf];
 
         FileOutputStream output = null;
         File attuale = startFile, out = new File(nomeFileFinale);
@@ -36,7 +37,8 @@ public class Merger {
             while(true){
                 try {
                     if (!(fis.available() != 0)) break;
-                    output.write(fis.read());
+                    fis.read(buf);
+                    output.write(buf);
                 }
                 catch (IOException e) {
                     e.printStackTrace();

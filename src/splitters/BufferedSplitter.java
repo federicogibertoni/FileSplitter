@@ -26,20 +26,20 @@ public class BufferedSplitter implements Runnable {
             e.printStackTrace();
         }
 
-        int trasf = (int) file.length(), c = 1, i = 0, dimBuf = 16, dimPar = 10240;
+        int trasf = (int) file.length(), c = 1, i = 0, dimBuf = 8192, dimPar = 104857600;
         byte[] buf = new byte[dimBuf];
 
         //for(int i = 0; i<file.length(); i++){
         while(true){
             try {
                 if (!(fis.read(buf) != -1)) break;
-                trasf -= dimBuf;
+                //trasf -= dimBuf;
+                fos.write(buf);
                 dimPar -= dimBuf;
                 if(/*trasf <= 0 || */dimPar <= 0) {
-                    dimPar = 10240;
+                    dimPar = 104857600;
                     fos = new FileOutputStream(file.getName() + "" + (++c) + ".par");
                 }
-                fos.write(buf);
             } catch (IOException e) {
                 e.printStackTrace();
             }
