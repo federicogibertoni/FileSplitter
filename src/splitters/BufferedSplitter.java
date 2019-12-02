@@ -29,7 +29,6 @@ public class BufferedSplitter implements Runnable {
         int trasf = (int) file.length(), c = 1, i = 0, dimBuf = 8192, dimPar = 104857600;
         byte[] buf = new byte[dimBuf];
 
-        //for(int i = 0; i<file.length(); i++){
         while(true){
             try {
                 if (!(fis.read(buf) != -1)) break;
@@ -38,6 +37,8 @@ public class BufferedSplitter implements Runnable {
                 dimPar -= dimBuf;
                 if(/*trasf <= 0 || */dimPar <= 0) {
                     dimPar = 104857600;
+                    fos.flush();
+                    fos.close();
                     fos = new FileOutputStream(file.getName() + "" + (++c) + ".par");
                 }
             } catch (IOException e) {
@@ -46,6 +47,7 @@ public class BufferedSplitter implements Runnable {
         }
         try {
             fis.close();
+            fos.flush();
             fos.close();
         } catch (IOException e) {
             e.printStackTrace();
