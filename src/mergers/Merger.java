@@ -40,10 +40,11 @@ public class Merger {
     }
 
     private void unzip() {
+        System.out.println("Entrato nel merger");
         String nomeFile = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par") - 1);
         String nomeFileFinale = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par") - 1) + "fine";
 
-        int c = 1, dimBuf = 8192;
+        int c = 1, dimBuf = 8192, prova = 0, tot = 0;
         byte[] buf = new byte[dimBuf];
 
         File out = new File(nomeFileFinale);
@@ -62,31 +63,31 @@ public class Merger {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        int length = 0;
         File attuale = startFile;       //file attuale da cui iniziare a leggere
         while (attuale.exists()) {      //finché non ha ancora letto l'ultima parte
             try {
-                while((ze = zis.getNextEntry()) != null){
-                    while (zis.available() > 0) {
-                        zis.read(buf);
-                        fos.write(buf);                     //scrivi
+                zis.getNextEntry();
+                    while ((length = zis.read(buf, 0, buf.length)) >= 0) {
+                        fos.write(buf, 0, length);                     //scrivi
                     }
-                }
+
             } catch (IOException e) {
                     e.printStackTrace();
             }
-
-        }
-
-        attuale = new File(nomeFile + (++c) + ".par.zip"); //cambia l'input da cui leggere
-        try {
-            if (attuale.exists()) {
-                zis.close();
-                zis = new ZipInputStream(new FileInputStream(attuale));     //crea il nuovo stream
+            c++;
+            attuale = new File(nomeFile + (c) + ".par.zip"); //cambia l'input da cui leggere
+            try {
+                if (attuale.exists()) {
+                    zis.close();
+                    zis = new ZipInputStream(new FileInputStream(attuale));     //crea il nuovo stream
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
+
+
 
         try{
             zis.close();
@@ -149,8 +150,9 @@ public class Merger {
         while(attuale.exists()) {
             //while (true) {
                 try {
-                    while ((cis.read(buf) != -1))
-                        fos.write(buf);
+                    int length = 0;
+                    while ((length = cis.read(buf, 0 , buf.length)) >= 0)
+                        fos.write(buf, 0, length);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

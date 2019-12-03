@@ -12,47 +12,72 @@ import java.nio.file.Files;
 import java.security.*;
 import java.security.cert.CertificateException;
 
-public class CryptoSplitter implements Runnable {
-    private BufferedSplitter split;
-
+/**
+ * Classe che implementa la divisione dei file tramite l'uso di un buffer e li cripta con una chiave chiesta all'utente.
+ */
+public class CryptoSplitter extends Splitter implements Runnable {
+    //private BufferedSplitter split;
+    /**
+     * Attributo che contiene il file da dividere.
+     */
     private File file;
 
+    /**
+     * Costruttore dello Splitter.
+     * @param path Path del file da dividere.
+     */
     public CryptoSplitter(String path){
-        file = new File(path);
-        split = new BufferedSplitter(path);
+        super(path);
+        //file = new File(path);
+        //split = new BufferedSplitter(path);
     }
 
+    /**
+     * Costruttore dello Splitter.
+     * @param f File da dividere.
+     */
     public CryptoSplitter(File f){
-        file = f;
-        split = new BufferedSplitter(file);
+        super(f);
+        //file = f;
+        //split = new BufferedSplitter(file);
     }
 
+    /**
+     * Metodo che implementa la divisione di file in dimensioni uguali(tranne l'ultimo) tramite un buffer
+     * e scrive i file divisi criptati con una password chiesta da utente.
+     * L'IV usato nel cipher è scritto nella prima parte del primo file, in chiaro.
+     */
     @Override
     public void run() {
-        assert file.exists();
+        split();
+    }
+
+    void split() {
+        assert file.exists();               //controllo che il file esista altrimenti termino l'esecuzione
 
         FileInputStream fis = null;
         FileOutputStream fos = null;
         Key key = null;
 
         System.out.println("Inserisci una password per criptare");
-        String pass = null;
+        String pass = null;                 //chiedo una password all'utente
         byte[] digestedPass;
         try {
+            //faccio inserire all'utente una password per criptare
             pass = new BufferedReader(new InputStreamReader(System.in)).readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        digestedPass = MD5(pass);
-        key = new SecretKeySpec(digestedPass,0,digestedPass.length, "AES");
+        digestedPass = MD5(pass);           //faccio l'hash a 128 bit della password dell'utente
+        key = new SecretKeySpec(digestedPass,0,digestedPass.length, "AES");     //creo una chiave
 
         SecureRandom srGen = new SecureRandom();
         byte[] iv = new byte[16];
-        srGen.nextBytes(iv);
+        srGen.nextBytes(iv);        //genero in modo casuale un IV
         Cipher cipher = null;
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-            cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));
+            cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(iv));     //creo un cipher con la chiave e l'IV
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (NoSuchPaddingException e) {
@@ -63,7 +88,7 @@ public class CryptoSplitter implements Runnable {
             e.printStackTrace();
         }
         try {
-            fis = new FileInputStream(file);
+            fis = new FileInputStream(file);                //apro gli stream in modalità "in chiaro"
             fos = new FileOutputStream(file.getName()+""+"1.par.crypto");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -72,22 +97,23 @@ public class CryptoSplitter implements Runnable {
         int trasf = (int) file.length(), c = 1, i = 0, dimBuf = 8192, dimPar = 104857600;
         byte[] buf = new byte[dimBuf];
         try {
-            fos.write(iv);
+            fos.write(iv);              //scrivo l'IV all'inizio del file per salvarlo
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        //trasformo lo stream "in chiaro" in uno stream cifrato con il cipher creato prima
         CipherOutputStream cos = new CipherOutputStream(fos, cipher);
         while(true){
             try {
-                if (!(fis.read(buf) != -1)) break;
+                if (!(fis.read(buf) != -1)) break;          //leggo dallo stream in chiaro
                 //trasf -= dimBuf;
-                cos.write(buf);
-                dimPar -= dimBuf;
-                if(/*trasf <= 0 || */dimPar <= 0) {
-                    dimPar = 104857600;
-                    cos.flush();
+                cos.write(buf);                     //scrivo il buffer con lo stream cifrato
+                dimPar -= dimBuf;                   //sottraggo alla dimensione della partizione quella del buffer
+                if(/*trasf <= 0 || */dimPar <= 0) { //quando la partizione è piena
+                    dimPar = 104857600;             //reimposto la dimensione
+                    cos.flush();                    //svuoto e chiudo lo stream
                     cos.close();
+                    //creo un nuovo stream per una nuova partizione
                     cos = new CipherOutputStream(new FileOutputStream(file.getName() + "" + (++c) + ".par.crypto"), cipher);
                 }
             } catch (IOException e) {
@@ -95,15 +121,13 @@ public class CryptoSplitter implements Runnable {
             }
         }
         try {
-            fis.close();
+            fis.close();            //chiudo e svuoto tutti gli stream
             cos.flush();
             cos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-
 }
 
 /*Thread splitter = new Thread(split);
