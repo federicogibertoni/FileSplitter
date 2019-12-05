@@ -20,7 +20,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
     /**
      * Attributo che contiene il file da dividere.
      */
-    private File file;
+    //private File file;
 
     /**
      * Costruttore dello Splitter.
@@ -53,7 +53,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
     }
 
     void split() {
-        assert file.exists();               //controllo che il file esista altrimenti termino l'esecuzione
+        assert startFile.exists();               //controllo che il file esista altrimenti termino l'esecuzione
 
         FileInputStream fis = null;
         FileOutputStream fos = null;
@@ -88,13 +88,13 @@ public class CryptoSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
         try {
-            fis = new FileInputStream(file);                //apro gli stream in modalità "in chiaro"
-            fos = new FileOutputStream(file.getName()+""+"1.par.crypto");
+            fis = new FileInputStream(startFile);                //apro gli stream in modalità "in chiaro"
+            fos = new FileOutputStream(startFile.getName()+""+"1.par.crypto");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        int trasf = (int) file.length(), c = 1, i = 0, dimBuf = 8192, dimPar = 104857600;
+        int trasf = (int) startFile.length(), c = 1, i = 0, dimBuf = 8192, dimPar = 104857600;
         byte[] buf = new byte[dimBuf];
         try {
             fos.write(iv);              //scrivo l'IV all'inizio del file per salvarlo
@@ -114,7 +114,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
                     cos.flush();                    //svuoto e chiudo lo stream
                     cos.close();
                     //creo un nuovo stream per una nuova partizione
-                    cos = new CipherOutputStream(new FileOutputStream(file.getName() + "" + (++c) + ".par.crypto"), cipher);
+                    cos = new CipherOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.crypto"), cipher);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

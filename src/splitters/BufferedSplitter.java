@@ -9,7 +9,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
     /**
      * Attributo che contiene il file da dividere.
      */
-    private File file;
+    //private File file;
 
     /**
      * Costruttore dello Splitter.
@@ -38,18 +38,18 @@ public class BufferedSplitter extends Splitter implements Runnable {
      * Metodo che implementa la divisione di file in dimensioni uguali(tranne l'ultimo) tramite un buffer.
      */
     public void split() {
-        assert file.exists();           //controllo che il file esista, altrimenti termino l'esecuzione
+        assert startFile.exists();           //controllo che il file esista, altrimenti termino l'esecuzione
 
         FileInputStream fis = null;
         FileOutputStream fos = null;
         try {
-            fis = new FileInputStream(file);                //creo gli stream di lettura e scrittura
-            fos = new FileOutputStream(file.getName()+""+"1.par");
+            fis = new FileInputStream(startFile);                //creo gli stream di lettura e scrittura
+            fos = new FileOutputStream(startFile.getName()+""+"1.par");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        int trasf = (int) file.length(), c = 1, dimBuf = 8192, dimPar = 104857600;
+        int trasf = (int) startFile.length(), c = 1, dimBuf = 8192, dimPar = 104857600;
         byte[] buf = new byte[dimBuf];
 
         while(true){
@@ -62,7 +62,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
                     dimPar = 104857600;         //reimposto la dimensione della partizione
                     fos.flush();                //svuoto lo stream
                     fos.close();                //chiudo lo stream e ne creo uno nuovo
-                    fos = new FileOutputStream(file.getName() + "" + (++c) + ".par");
+                    fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

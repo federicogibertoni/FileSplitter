@@ -16,5 +16,13 @@ public abstract class Splitter implements Runnable{
         startFile = new File(path);
     }
 
+    public File getStartFile() {
+        return startFile;
+    }
+
+    public void setStartFile(File startFile) {
+        this.startFile = startFile;
+    }
+
     abstract void split();
 }

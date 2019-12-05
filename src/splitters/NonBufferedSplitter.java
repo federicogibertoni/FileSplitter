@@ -9,14 +9,15 @@ public class NonBufferedSplitter extends Splitter implements Runnable{
     /**
      * Attributo che contiene il file da dividere.
      */
-    private File file;
+    //private File file;
 
     /**
      * Costruttore dello Splitter.
      * @param path Path del file da dividere.
      */
     public NonBufferedSplitter(String path){
-        file = new File(path);
+        super(path);
+        //file = new File(path);
     }
 
     /**
@@ -24,7 +25,8 @@ public class NonBufferedSplitter extends Splitter implements Runnable{
      * @param f File da dividere.
      */
     public NonBufferedSplitter(File f){
-        file = f;
+        super(f);
+        //file = f;
     }
 
     /**
@@ -32,24 +34,24 @@ public class NonBufferedSplitter extends Splitter implements Runnable{
      * Usato per dividere i file in parti di dimensioni uguale, fatta eccezione per l'ultima.
      */
     @Override
-    public void run() {
+    public void split() {
         int dim = 10240;                //dimensione massima di una parte
-        assert file.exists();           //controllo che il file esista, altrimenti termino l'esecuzione
+        assert startFile.exists();           //controllo che il file esista, altrimenti termino l'esecuzione
 
         FileInputStream fis = null;
         FileOutputStream fos = null;
         try {
-            fis = new FileInputStream(file);    //creo un nuovo stream di output
+            fis = new FileInputStream(startFile);    //creo un nuovo stream di output
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
         int trasf, c = 0;
-        for(int i = 0; i<file.length(); i++){
+        for(int i = 0; i<startFile.length(); i++){
             try {
                 if(i == 0 || i % dim == 0) {  //se lo stream è appena iniziato oppure è finita la partizione ne creo un altro
                     if(fos != null)
                         fos.close();
-                    fos = new FileOutputStream(file.getName() + "" + (++c) + ".par");
+                    fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
                 }
                 trasf = fis.read();     //leggo un intero
                 fos.write(trasf);       //scrivo un intero
@@ -63,5 +65,10 @@ public class NonBufferedSplitter extends Splitter implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void run(){
+        split();
     }
 }
