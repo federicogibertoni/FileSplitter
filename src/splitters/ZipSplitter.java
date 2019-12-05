@@ -1,26 +1,23 @@
 package splitters;
 
 import java.io.*;
+import java.util.Dictionary;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import static utils.Const.DIM_MAX_BUF;
+import static utils.Const.DIM_MAX_PAR;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer e comprime tutte le partizioni create.
  */
 public class ZipSplitter extends Splitter implements Runnable {
-
-    /**
-     * Attributo che contiene il file da dividere.
-     */
-    private File startFile;
-
     /**
      * Costruttore dello Splitter.
      * @param f File da dividere.
      */
     public ZipSplitter(File f){
         super(f);
-        //startFile = f;
     }
 
     /**
@@ -29,24 +26,27 @@ public class ZipSplitter extends Splitter implements Runnable {
      */
     public ZipSplitter(String path){
         super(path);
-        //startFile = new File(path);
     }
 
+    /**
+     * Metodo che sovrascrive quello implementato dall'interfaccia Runnable.
+     * Chiama il metodo split().
+     */
     @Override
     public void run() {
         split();
     }
+
     /**
      * Metodo che implementa la divisione di file in dimensioni uguali(tranne l'ultimo) tramite un buffer.
      * I file creati vengono tutti compressi tramite l'utilizzo di un ZipOutputStream.
      */
     public void split() {
-        System.out.println("Entrato nello splitter zip");
         assert startFile.exists();              //controllo che il file esista altrimenti termino l'esecuzione
 
         String outputFile = startFile.getName()+"1.par";    //nome della prima ZipEntry
 
-        int trasf = (int) startFile.length(), c = 1, i = 0, dimBuf = 8192, dimPar = 104857600;
+        int trasf = (int) startFile.length(), c = 1, i = 0, dimBuf = DIM_MAX_BUF, dimPar = DIM_MAX_PAR;
 
         byte[] buf = new byte[dimBuf];
 
@@ -61,26 +61,28 @@ public class ZipSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        while(true){
-            try {
-                //leggo dallo stream
-                if (fis.read(buf, 0, buf.length) == -1) break;
-                zos.write(buf);             //scrivo nel file compresso
-                dimPar -= dimBuf;           //tolgo alla dimensione della partizione la dimensione del buffer
-                if(dimPar <= 0){
-                    dimPar = 104857600;       //reimposto la dimensione della partizione
-                    zos.flush();
-                    zos.closeEntry();       //chiudo la entry, svuoto lo stream e lo chiudo
-                    zos.close();
-                    //creo un nuovo stream e creo la prima entry
-                    zos = new ZipOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.zip"));
-                    zos.putNextEntry(new ZipEntry(startFile.getName() + "" + (c) + ".par"));
+        int length = 0;
+        try {
+            while ((length = fis.read(buf, 0, buf.length)) >= 0){
+                if((dimPar-length) >= 0) {          //se lo spazio non è ancora finito scrivo normalmente
+                    zos.write(buf, 0, length);
+                    dimPar -= length;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+                else {
+                    //se lo spazio è finito devo svuotare il buffer finché può e finire di svuotarlo nel nuovo stream
+                    int rem = length-dimPar;
+                    zos.write(buf, 0, dimPar);
+                    zos.closeEntry();               //chiudo la entry attuale visto che è finita
+                    zos.close();
+                    zos = new ZipOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.zip"));
+                    //apro una nuova entry
+                    zos.putNextEntry(new ZipEntry(startFile.getName() + "" + (c) + ".par"));
+                    zos.write(buf, dimPar, rem);
+                    dimPar = DIM_MAX_PAR-rem;
+                }
             }
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         try{
             fis.close();            //chiudo tutti gli stream e l'ultima entry aperta
@@ -90,7 +92,11 @@ public class ZipSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        /*while(true){
+
+    }
+}
+
+/*while(true){
             try {
                 if (!(fis.read(buf) != -1)) break;
                 //trasf -= dimBuf;
@@ -111,5 +117,32 @@ public class ZipSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }*/
-    }
-}
+
+                /*while ((length = fis.read(buf, 0, buf.length)) >= 0){
+                if((dimPar-length) >= 0) {
+                    fos.write(buf, 0, length);
+                    dimPar -= length;
+                }
+                else{
+                    int rem = length-dimPar;
+                    fos.write(buf, 0, dimPar);
+                    fos.close();
+                    fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
+                    fos.write(buf, dimPar, rem);
+                    dimPar = DIM_MAX_PAR-rem;         //reimposto la dimensione della partizione
+                }
+            }*/
+
+                /*//leggo dallo stream
+                if (fis.read(buf, 0, buf.length) == -1) break;
+                zos.write(buf);             //scrivo nel file compresso
+                dimPar -= dimBuf;           //tolgo alla dimensione della partizione la dimensione del buffer
+                if(dimPar <= 0){
+                    dimPar = 104857600;       //reimposto la dimensione della partizione
+                    zos.flush();
+                    zos.closeEntry();       //chiudo la entry, svuoto lo stream e lo chiudo
+                    zos.close();
+                    //creo un nuovo stream e creo la prima entry
+                    zos = new ZipOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.zip"));
+                    zos.putNextEntry(new ZipEntry(startFile.getName() + "" + (c) + ".par"));
+                }*/

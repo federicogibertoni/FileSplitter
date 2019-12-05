@@ -1,5 +1,7 @@
 package splitters;
 
+import static utils.Const.DIM_MAX_BUF;
+import static utils.Const.DIM_MAX_PAR;
 import static utils.MyUtils.*;
 
 import javax.crypto.*;
@@ -8,28 +10,18 @@ import javax.crypto.spec.SecretKeySpec;
 
 import java.io.*;
 
-import java.nio.file.Files;
 import java.security.*;
-import java.security.cert.CertificateException;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer e li cripta con una chiave chiesta all'utente.
  */
 public class CryptoSplitter extends Splitter implements Runnable {
-    //private BufferedSplitter split;
-    /**
-     * Attributo che contiene il file da dividere.
-     */
-    //private File file;
-
     /**
      * Costruttore dello Splitter.
      * @param path Path del file da dividere.
      */
     public CryptoSplitter(String path){
         super(path);
-        //file = new File(path);
-        //split = new BufferedSplitter(path);
     }
 
     /**
@@ -38,8 +30,15 @@ public class CryptoSplitter extends Splitter implements Runnable {
      */
     public CryptoSplitter(File f){
         super(f);
-        //file = f;
-        //split = new BufferedSplitter(file);
+    }
+
+    /**
+     * Metodo che sovrascrive quello implementato dall'interfaccia Runnable.
+     * Chiama il metodo split().
+     */
+    @Override
+    public void run() {
+        split();
     }
 
     /**
@@ -47,11 +46,6 @@ public class CryptoSplitter extends Splitter implements Runnable {
      * e scrive i file divisi criptati con una password chiesta da utente.
      * L'IV usato nel cipher è scritto nella prima parte del primo file, in chiaro.
      */
-    @Override
-    public void run() {
-        split();
-    }
-
     void split() {
         assert startFile.exists();               //controllo che il file esista altrimenti termino l'esecuzione
 
@@ -94,7 +88,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
-        int trasf = (int) startFile.length(), c = 1, i = 0, dimBuf = 8192, dimPar = 104857600;
+        int trasf = (int) startFile.length(), c = 1, i = 0, dimBuf = DIM_MAX_BUF, dimPar = DIM_MAX_PAR;
         byte[] buf = new byte[dimBuf];
         try {
             fos.write(iv);              //scrivo l'IV all'inizio del file per salvarlo
@@ -103,22 +97,25 @@ public class CryptoSplitter extends Splitter implements Runnable {
         }
         //trasformo lo stream "in chiaro" in uno stream cifrato con il cipher creato prima
         CipherOutputStream cos = new CipherOutputStream(fos, cipher);
-        while(true){
-            try {
-                if (!(fis.read(buf) != -1)) break;          //leggo dallo stream in chiaro
-                //trasf -= dimBuf;
-                cos.write(buf);                     //scrivo il buffer con lo stream cifrato
-                dimPar -= dimBuf;                   //sottraggo alla dimensione della partizione quella del buffer
-                if(/*trasf <= 0 || */dimPar <= 0) { //quando la partizione è piena
-                    dimPar = 104857600;             //reimposto la dimensione
-                    cos.flush();                    //svuoto e chiudo lo stream
-                    cos.close();
-                    //creo un nuovo stream per una nuova partizione
-                    cos = new CipherOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.crypto"), cipher);
+        int length = 0;
+        try {
+            while((length = fis.read(buf, 0, buf.length)) >= 0){
+                if((dimPar-length) >= 0) {          //se lo spazio non è ancora finito scrivo normalmente
+                    cos.write(buf, 0, length);
+                    dimPar -= length;
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
+                else{
+                    //se lo spazio è finito devo svuotare il buffer finché può e finire di svuotarlo nel nuovo stream
+                    int rem = length-dimPar;
+                    cos.write(buf, 0, dimPar);
+                    cos.close();
+                    cos = new CipherOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.crypto"), cipher);
+                    cos.write(buf, dimPar, rem);
+                    dimPar = DIM_MAX_PAR - rem;
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         try {
             fis.close();            //chiudo e svuoto tutti gli stream
@@ -130,6 +127,28 @@ public class CryptoSplitter extends Splitter implements Runnable {
     }
 }
 
+                /*
+                else{
+                    int rem = length-dimPar;
+                    fos.write(buf, 0, dimPar);
+                    fos.close();
+                    fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
+                    fos.write(buf, dimPar, rem);
+                    dimPar = DIM_MAX_PAR-rem;         //reimposto la dimensione della partizione
+                }
+            }*/
+
+                /*if (!(fis.read(buf) != -1)) break;          //leggo dallo stream in chiaro
+                //trasf -= dimBuf;
+                cos.write(buf);                     //scrivo il buffer con lo stream cifrato
+                dimPar -= dimBuf;                   //sottraggo alla dimensione della partizione quella del buffer
+                if(/*trasf <= 0 || dimPar <= 0) { //quando la partizione è piena
+                    dimPar = 104857600;             //reimposto la dimensione
+                    cos.flush();                    //svuoto e chiudo lo stream
+                    cos.close();
+                    //creo un nuovo stream per una nuova partizione
+                    cos = new CipherOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.crypto"), cipher);
+                }*/
 /*Thread splitter = new Thread(split);
         splitter.start();
         try {
