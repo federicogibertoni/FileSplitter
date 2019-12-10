@@ -38,7 +38,10 @@ public class CryptoSplitter extends Splitter implements Runnable {
      */
     @Override
     public void run() {
-        split();
+        if(startFile.getName().indexOf(".par.crypto") == -1)
+            split();
+        else
+            merge();
     }
 
     /**
@@ -46,7 +49,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
      * e scrive i file divisi criptati con una password chiesta da utente.
      * L'IV usato nel cipher è scritto nella prima parte del primo file, in chiaro.
      */
-    void split() {
+    public void split() {
         assert startFile.exists();               //controllo che il file esista altrimenti termino l'esecuzione
 
         FileInputStream fis = null;
@@ -121,6 +124,93 @@ public class CryptoSplitter extends Splitter implements Runnable {
             fis.close();            //chiudo e svuoto tutti gli stream
             cos.flush();
             cos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metodo che implementa la ricostruzione del file precedentemente criptato con password indicata da utente.
+     */
+    public void merge(){
+        System.out.println("Inserisci la chiave per decriptare");
+        String chiaveString = null;
+        byte[] digestedPass;                //inserimento della password per decriptare
+        try {
+            chiaveString = new BufferedReader(new InputStreamReader(System.in)).readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        digestedPass = MD5(chiaveString);
+        Key key = new SecretKeySpec(digestedPass, 0, digestedPass.length, "AES");
+        //creo la chiave
+        byte[] iv = new byte[16];
+        File attuale = startFile;
+        FileInputStream fis = null;
+
+        //apro lo stream in chiaro per poter leggere l'IV
+        try{
+            fis = new FileInputStream(attuale);
+            fis.read(iv);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //creo il cipher per decriptare con la chiave e l'IV
+        Cipher cipher = null;
+        try {
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        }
+
+        //nome del file originale
+        String nomeFile = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1);
+        int dimBuf = DIM_MAX_BUF, c = 1;
+        byte[] buf = new byte[dimBuf];
+
+        CipherInputStream cis = null;
+        FileOutputStream fos = null;
+        try {
+            //apro gli stream
+            cis = new CipherInputStream(fis, cipher);
+            fos = new FileOutputStream(new File(startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1) + "fine"));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        while(attuale.exists()) {
+            try {
+                //ciclo di lettura e decifratura
+                int length = 0;
+                while ((length = cis.read(buf, 0 , buf.length)) >= 0)
+                    fos.write(buf, 0, length);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //prossima parte da leggere
+            attuale = new File(nomeFile + (++c) + ".par.crypto");
+            try {
+                //se non sono finite le parti
+                if (attuale.exists()) {
+                    cis.close();
+                    cis = new CipherInputStream(new FileInputStream(attuale), cipher);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try{
+            cis.close();            //chiudo gli stream
+            fos.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

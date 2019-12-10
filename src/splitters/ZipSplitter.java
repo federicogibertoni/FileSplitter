@@ -3,6 +3,7 @@ package splitters;
 import java.io.*;
 import java.util.Dictionary;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static utils.Const.DIM_MAX_BUF;
@@ -34,7 +35,10 @@ public class ZipSplitter extends Splitter implements Runnable {
      */
     @Override
     public void run() {
-        split();
+        if(startFile.getName().indexOf(".par.zip") == -1)
+            split();
+        else
+            merge();
     }
 
     /**
@@ -93,6 +97,66 @@ public class ZipSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Metodo che implementa la ricostruzione del file originale decomprimento le parti in cui esso è stato diviso.
+     */
+    public void merge(){
+        //nome del file originale per cercare le parti successive
+        String nomeFile = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par") - 1);
+
+        //nome del file ricostruito
+        String nomeFileFinale = nomeFile + "fine";
+
+        int c = 1, dimBuf = DIM_MAX_BUF;
+        byte[] buf = new byte[dimBuf];
+
+        //creo il file che verrà ricostruito
+        File out = new File(nomeFileFinale);
+
+        ZipInputStream zis = null;
+        FileOutputStream fos = null;
+
+        try {
+            //apro gli stream di lettura di zip e scrittura del file finale
+            zis = new ZipInputStream(new FileInputStream(startFile.getName()));
+
+            if (!out.exists())
+                out.createNewFile();
+            fos = new FileOutputStream(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int length = 0;                 //quanti byte vengono letti in ogni ciclo
+        File attuale = startFile;       //file attuale da cui iniziare a leggere
+        while (attuale.exists()) {      //finché non ha ancora letto l'ultima parte
+            try {
+                zis.getNextEntry();     //ottengo la prima ZipEntry
+                while ((length = zis.read(buf, 0, buf.length)) >= 0) {
+                    fos.write(buf, 0, length);                     //scrivi
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            c++;                    //aggiorno il file da cui andrò a leggere
+            attuale = new File(nomeFile + (c) + ".par.zip"); //cambia l'input da cui leggere
+            try {
+                //se le parti non sono finite
+                if (attuale.exists()) {
+                    zis.close();
+                    zis = new ZipInputStream(new FileInputStream(attuale));     //crea il nuovo stream
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try{
+            zis.close();                //chiudi gli stream
+            fos.close();
+        } catch(IOException e){
+            e.printStackTrace();
+        }
     }
 }
 

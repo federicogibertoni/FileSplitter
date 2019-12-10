@@ -1,22 +1,23 @@
-package view;
+package gui;
 
 import splitters.Splitter;
 
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import java.util.Vector;
 
 public class QueueTableModel extends DefaultTableModel {
-    private Vector<RowElement> v = null;
+    private Vector<Splitter> v = null;
     private String[] col = {"File", "Modalità", "Grandezza", "Directory", "Progresso"};
 
-    public QueueTableModel(Object[] e, int rowCount, Vector<RowElement> vec){
+    public QueueTableModel(Object[] e, int rowCount, Vector<Splitter> vec){
         super(e, rowCount);
         v = vec;
     }
 
     @Override
     public int getRowCount() {
+        if(v == null)
+            return 0;
         return v.size();
     }
 
@@ -37,20 +38,27 @@ public class QueueTableModel extends DefaultTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        if (columnIndex == 1)
-            return true;
         return false;
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        RowElement re = (RowElement) v.elementAt(rowIndex);
+        Splitter re = (Splitter) v.elementAt(rowIndex);
         switch (columnIndex){
-            case 0: return re.getTask().getStartFile().getName();
-            case 1: return re.getMod();
-            case 2: return (int)re.getTask().getStartFile().length();
-            case 3: return re.getTask().getStartFile().getAbsolutePath();
-            case 4: return re.getProgress();
+            case 0: return re.getStartFile().getName();
+            case 1:
+                switch(re.getClass().getCanonicalName()){
+                    case "splitters.BufferedSplitter":
+                        return "Split";
+                    case "splitters.CryptoSplitter":
+                        return "Crypto";
+                    case "splitters.ZipSplitter":
+                        return "Zip";
+                }
+                return re.getClass().getCanonicalName();
+            case 2: return (int)re.getStartFile().length();
+            case 3: return re.getStartFile().getAbsolutePath();
+            case 4: return re.getProgressBar();
             default: return null;
         }
     }

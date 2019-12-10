@@ -32,7 +32,10 @@ public class BufferedSplitter extends Splitter implements Runnable {
      */
     @Override
     public void run() {
-        split();
+        if(startFile.getName().indexOf(".par") == -1)
+            split();
+        else
+            merge();
     }
 
     /**
@@ -76,6 +79,62 @@ public class BufferedSplitter extends Splitter implements Runnable {
             fis.close();                //chiudo tutti gli stream
             fos.flush();
             fos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Metodo che implementa la ricomposizione semplice delle parti di un file.
+     */
+    public void merge() {
+        //nome del file originale
+        String nomeFile = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1);
+        //nome del file ricostruito
+        String nomeFileFinale = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1) + "fine";
+
+        int c = 1, dimBuf = DIM_MAX_BUF;
+        byte[] buf = new byte[dimBuf];
+
+        FileOutputStream output = null;
+        File attuale = startFile, out = new File(nomeFileFinale);
+        FileInputStream fis = null;
+        try {
+            //apertura degli stream
+            if (!out.exists())
+                out.createNewFile();
+            output = new FileOutputStream(out);
+            fis = new FileInputStream(attuale);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int length = 0;
+
+        //se la parte attuale esiste
+        while(attuale.exists()){
+            try {
+                //ciclo di lettura
+                while((length = fis.read(buf, 0, buf.length)) >= 0)
+                    output.write(buf, 0, length);
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+            //controllo se c'è un'altra parte
+            attuale = new File(nomeFile+(++c)+".par");
+            try {
+                //se non sono finite le parti
+                if(attuale.exists()) {
+                    fis.close();
+                    fis = new FileInputStream(attuale);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            fis.close();        //chiudo gli stream
+            output.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

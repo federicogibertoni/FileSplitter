@@ -5,19 +5,19 @@ import java.io.*;
 /**
  * Classe che implementa lo splitter senza buffer, legge un byte per ogni ciclo.
  */
-public class NonBufferedSplitter extends Splitter implements Runnable{
+public class NonBufferedSplitter implements Runnable{
     /**
      * Attributo che contiene il file da dividere.
      */
-    //private File file;
+    private File startFile;
 
     /**
      * Costruttore dello Splitter.
      * @param path Path del file da dividere.
      */
     public NonBufferedSplitter(String path){
-        super(path);
-        //file = new File(path);
+//        super(path);
+        startFile = new File(path);
     }
 
     /**
@@ -25,15 +25,14 @@ public class NonBufferedSplitter extends Splitter implements Runnable{
      * @param f File da dividere.
      */
     public NonBufferedSplitter(File f){
-        super(f);
-        //file = f;
+//        super(f);
+        startFile = f;
     }
 
     /**
      * Metodo che sovrascrive la sua implementazione in Runnable.
      * Usato per dividere i file in parti di dimensioni uguale, fatta eccezione per l'ultima.
      */
-    @Override
     public void split() {
         int dim = 10240;                //dimensione massima di una parte
         assert startFile.exists();           //controllo che il file esista, altrimenti termino l'esecuzione

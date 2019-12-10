@@ -1,5 +1,6 @@
 package splitters;
 
+import javax.swing.*;
 import java.io.File;
 
 /**
@@ -12,6 +13,7 @@ public abstract class Splitter implements Runnable{
      * Il file da dividere.
      */
     protected File startFile;
+    protected JProgressBar progressBar;
 
     /**
      * Costruttore per inizializzare il file da dividere.
@@ -19,6 +21,7 @@ public abstract class Splitter implements Runnable{
      */
     public Splitter(File f){
         startFile = f;
+        progressBar = new JProgressBar();
     }
 
     /**
@@ -27,6 +30,15 @@ public abstract class Splitter implements Runnable{
      */
     public Splitter(String path){
         startFile = new File(path);
+        progressBar = new JProgressBar();
+    }
+
+    public JProgressBar getProgressBar() {
+        return progressBar;
+    }
+
+    public void setProgressBar(JProgressBar progressBar) {
+        this.progressBar = progressBar;
     }
 
     /**
@@ -49,4 +61,12 @@ public abstract class Splitter implements Runnable{
      * Ogni Splitter dovrà implementare questo metodo per effettuare la divisione.
      */
     abstract void split();
+
+    /**
+     * Ogni Splitter dovrà implementare questo metodo per effettuare la ricostruzione.
+     */
+    abstract void merge();
+
+    @Override
+    public abstract void run();
 }
