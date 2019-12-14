@@ -1,5 +1,9 @@
 package gui;
 
+import splitters.BufferedSplitter;
+import splitters.CryptoSplitter;
+import splitters.ZipSplitter;
+
 import javax.swing.*;
 import java.awt.event.*;
 
@@ -16,12 +20,20 @@ public class SettingsDialog extends JDialog {
     private JLabel nPartiLabel;
     private JLabel modLabel;
 
+    /**
+     * Classe interna che implementa il listener per animare i campi del dialog a seconda della selezione della JComboBox.
+     */
     private class ComboSelectionListener implements ActionListener{
 
+        /**
+         * Implementazione del listener.
+         * A seconda del valore della JComboBox abilita o disabilita i componenti relativi alla modalità scelta.
+         * @param e Evento generato.
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             switch (modValue.getSelectedIndex()){
-                case 0:
+                case 0:         //BufferedSplitter con dimensione specificata
                     dimLabel.setEnabled(true);
                     dimValue.setEnabled(true);
                     passLabel.setEnabled(false);
@@ -29,7 +41,7 @@ public class SettingsDialog extends JDialog {
                     nPartiLabel.setEnabled(false);
                     nPartiValue.setEnabled(false);
                     break;
-                case 1:
+                case 1:         //CryptoSplitter
                     dimLabel.setEnabled(false);
                     dimValue.setEnabled(false);
                     passLabel.setEnabled(true);
@@ -37,7 +49,7 @@ public class SettingsDialog extends JDialog {
                     nPartiLabel.setEnabled(false);
                     nPartiValue.setEnabled(false);
                     break;
-                case 2:
+                case 2:         //ZipSplitter
                     dimLabel.setEnabled(false);
                     dimValue.setEnabled(false);
                     passLabel.setEnabled(false);
@@ -45,7 +57,7 @@ public class SettingsDialog extends JDialog {
                     nPartiLabel.setEnabled(false);
                     nPartiValue.setEnabled(false);
                     break;
-                case 3:
+                case 3:         //BufferedSplitter con numero parti
                     dimLabel.setEnabled(false);
                     dimValue.setEnabled(false);
                     passLabel.setEnabled(false);
@@ -57,11 +69,15 @@ public class SettingsDialog extends JDialog {
         }
     }
 
+    /**
+     * Costruttore chiamato durante l'inserimento di un nuovo valore nella tabella.
+     */
     public SettingsDialog() {
         setContentPane(contentPane);
-        setModal(true);
-        getRootPane().setDefaultButton(buttonOK);
+        setModal(true);             //blocca l'input nelle altre finestre
+        getRootPane().setDefaultButton(buttonOK);       //nel pannello di base metto come bottone di default di chiusura quello di OK
 
+        //aggiungo listener ai bottoni
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
@@ -74,7 +90,7 @@ public class SettingsDialog extends JDialog {
             }
         });
 
-        // call onCancel() when cross is clicked
+        //quando si chiude la finestra viene chiamato onCancel()
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -82,16 +98,18 @@ public class SettingsDialog extends JDialog {
             }
         });
 
-        // call onCancel() on ESCAPE
+        //quando la finestra è chiusa da ESC si chiama onCancel()
         contentPane.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
             }
         }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
-
+        //aggiungo il listener al selettore di modalità
         modValue.addActionListener(new ComboSelectionListener());
 
+        //imposto attiva solo la prima casella, cioè quella di default rispetto al combobox
+        //modValue.setSelectedIndex(0);
         dimLabel.setEnabled(true);
         dimValue.setEnabled(true);
         passLabel.setEnabled(false);
@@ -99,6 +117,74 @@ public class SettingsDialog extends JDialog {
         nPartiLabel.setEnabled(false);
         nPartiValue.setEnabled(false);
     }
+
+    /**
+     * Costruttore del dialog chiamato in fase di modifica di un file settato con BufferedSplitter.
+     * @param tmp BufferedSplitter che sarà modificato, da cui prendo i dati da mostrare.
+     */
+    public SettingsDialog(BufferedSplitter tmp) {
+        this();
+
+        passLabel.setEnabled(true);
+        passValue.setEnabled(true);
+
+        if(tmp.isParti()){
+            dimLabel.setEnabled(false);
+            dimValue.setEnabled(false);
+            nPartiLabel.setEnabled(true);
+            nPartiValue.setEnabled(true);
+
+            nPartiValue.setText(Long.toString(tmp.getnParti()));
+
+            modValue.setSelectedIndex(3);
+        }
+        else{
+            dimLabel.setEnabled(true);
+            dimValue.setEnabled(true);
+            nPartiLabel.setEnabled(false);
+            nPartiValue.setEnabled(false);
+
+            dimValue.setText(Integer.toString(tmp.getDimPar()));
+
+            modValue.setSelectedIndex(0);
+        }
+    }
+
+    /**
+     * Costruttore del dialog chiamato in fase di modifica di un file settato con CryptoSplitter.
+     * @param c CryptoSplitter che sarà modificato, da cui prendo i dati da mostrare.
+     */
+    public SettingsDialog(CryptoSplitter c) {
+        this();
+
+        dimLabel.setEnabled(false);
+        dimValue.setEnabled(false);
+        passLabel.setEnabled(true);
+        passValue.setEnabled(true);
+        nPartiLabel.setEnabled(false);
+        nPartiValue.setEnabled(false);
+
+        modValue.setSelectedIndex(1);
+    }
+
+    /**
+     * Costruttore del dialog chiamato in fase di modifica di un file settato con ZipSplitter.
+     * @param z ZipSplitter che sarà modificato, da cui prendo i dati da mostrare.
+     */
+    public SettingsDialog(ZipSplitter z){
+        this();
+
+        dimLabel.setEnabled(false);
+        dimValue.setEnabled(false);
+        passLabel.setEnabled(false);
+        passValue.setEnabled(false);
+        nPartiLabel.setEnabled(false);
+        nPartiValue.setEnabled(false);
+
+        modValue.setSelectedIndex(2);
+    }
+
+    //metodi get e set
 
     public JComboBox getModValue() {
         return modValue;
@@ -109,19 +195,66 @@ public class SettingsDialog extends JDialog {
     }
 
     private void onOK() {
-        // add your code here
         dispose();
     }
 
     private void onCancel() {
-        // add your code here if necessary
         dispose();
     }
 
-    public static void main(String[] args) {
-        SettingsDialog dialog = new SettingsDialog();
-        dialog.pack();
-        dialog.setVisible(true);
-        System.exit(0);
+    public JTextField getDimValue() {
+        return dimValue;
+    }
+
+    public void setDimValue(JTextField dimValue) {
+        this.dimValue = dimValue;
+    }
+
+    public JPasswordField getPassValue() {
+        return passValue;
+    }
+
+    public void setPassValue(JPasswordField passValue) {
+        this.passValue = passValue;
+    }
+
+    public JTextField getnPartiValue() {
+        return nPartiValue;
+    }
+
+    public void setnPartiValue(JTextField nPartiValue) {
+        this.nPartiValue = nPartiValue;
+    }
+
+    public JLabel getDimLabel() {
+        return dimLabel;
+    }
+
+    public void setDimLabel(JLabel dimLabel) {
+        this.dimLabel = dimLabel;
+    }
+
+    public JLabel getPassLabel() {
+        return passLabel;
+    }
+
+    public void setPassLabel(JLabel passLabel) {
+        this.passLabel = passLabel;
+    }
+
+    public JLabel getnPartiLabel() {
+        return nPartiLabel;
+    }
+
+    public void setnPartiLabel(JLabel nPartiLabel) {
+        this.nPartiLabel = nPartiLabel;
+    }
+
+    public JLabel getModLabel() {
+        return modLabel;
+    }
+
+    public void setModLabel(JLabel modLabel) {
+        this.modLabel = modLabel;
     }
 }

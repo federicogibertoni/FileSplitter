@@ -10,6 +10,26 @@ import static utils.Const.DIM_MAX_PAR;
  */
 public class BufferedSplitter extends Splitter implements Runnable {
 
+    private int dimPar;
+    private long nParti;
+    private boolean parti;
+
+    public BufferedSplitter(String path, int dimPar){
+        super(path);
+        this.dimPar = dimPar;
+        nParti = -1;
+        parti = false;
+    }
+    public BufferedSplitter(String path, long numPar){
+        super(path);
+        File tmp = new File(path);
+        this.nParti = numPar;
+        this.dimPar = (int)((tmp.length()/nParti)+(tmp.length()%nParti));
+
+        parti = true;
+    }
+
+
     /**
      * Costruttore dello Splitter.
      * @param path Path del file da dividere.
@@ -18,12 +38,29 @@ public class BufferedSplitter extends Splitter implements Runnable {
         super(path);
     }
 
+    public BufferedSplitter(File f, int dimPar){
+        super(f);
+        this.dimPar = dimPar;
+    }
+    public BufferedSplitter(File f, long numPar){
+        super(f);
+        this.dimPar = (int)((f.length()/numPar)+(f.length()%numPar));
+    }
+
     /**
      * Costruttore dello Splitter.
      * @param f File da dividere.
      */
     public BufferedSplitter(File f){
         super(f);
+    }
+
+    public int getDimPar() {
+        return dimPar;
+    }
+
+    public void setDimPar(int dimPar) {
+        this.dimPar = dimPar;
     }
 
     /**
@@ -53,7 +90,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
-        int trasf = (int) startFile.length(), c = 1, length = 0, dimBuf = DIM_MAX_BUF, dimPar = DIM_MAX_PAR;
+        int trasf = (int) startFile.length(), c = 1, length = 0, dimBuf = DIM_MAX_BUF;
         byte[] buf = new byte[dimBuf];
 
         try {
@@ -138,6 +175,14 @@ public class BufferedSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isParti() {
+        return parti;
+    }
+
+    public long getnParti() {
+        return nParti;
     }
 }
 

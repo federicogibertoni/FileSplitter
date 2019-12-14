@@ -49,7 +49,7 @@ public class QueueTableModel extends DefaultTableModel {
             case 1:
                 switch(re.getClass().getCanonicalName()){
                     case "splitters.BufferedSplitter":
-                        return "Split";
+                        return "Splitter";
                     case "splitters.CryptoSplitter":
                         return "Crypto";
                     case "splitters.ZipSplitter":

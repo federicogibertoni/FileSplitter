@@ -16,6 +16,22 @@ import java.security.*;
  * Classe che implementa la divisione dei file tramite l'uso di un buffer e li cripta con una chiave chiesta all'utente.
  */
 public class CryptoSplitter extends Splitter implements Runnable {
+
+    private String pass;
+
+    public String getPass() {
+        return pass;
+    }
+
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
+
+    public CryptoSplitter(String path, String pass){
+        super(path);
+        this.pass = pass;
+    }
+
     /**
      * Costruttore dello Splitter.
      * @param path Path del file da dividere.
@@ -24,6 +40,10 @@ public class CryptoSplitter extends Splitter implements Runnable {
         super(path);
     }
 
+    public CryptoSplitter(File f, String pass){
+        super(f);
+        this.pass = pass;
+    }
     /**
      * Costruttore dello Splitter.
      * @param f File da dividere.
@@ -56,8 +76,8 @@ public class CryptoSplitter extends Splitter implements Runnable {
         FileOutputStream fos = null;
         Key key = null;
 
-        System.out.println("Inserisci una password per criptare");
-        String pass = null;                 //chiedo una password all'utente
+        //System.out.println("Inserisci una password per criptare");
+        //String pass = null;                 //chiedo una password all'utente
         byte[] digestedPass;
         try {
             //faccio inserire all'utente una password per criptare
@@ -133,16 +153,14 @@ public class CryptoSplitter extends Splitter implements Runnable {
      * Metodo che implementa la ricostruzione del file precedentemente criptato con password indicata da utente.
      */
     public void merge(){
-        System.out.println("Inserisci la chiave per decriptare");
-        String chiaveString = null;
         byte[] digestedPass;                //inserimento della password per decriptare
         try {
-            chiaveString = new BufferedReader(new InputStreamReader(System.in)).readLine();
+            pass = new BufferedReader(new InputStreamReader(System.in)).readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        digestedPass = MD5(chiaveString);
+        digestedPass = MD5(pass);
         Key key = new SecretKeySpec(digestedPass, 0, digestedPass.length, "AES");
         //creo la chiave
         byte[] iv = new byte[16];
