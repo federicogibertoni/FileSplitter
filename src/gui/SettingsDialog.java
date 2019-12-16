@@ -6,6 +6,13 @@ import splitters.ZipSplitter;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.File;
+
+
+//
+//METTERE IL NOME DEL FILE CHE SI STA MODIFICANDO O AGGIUNGENDO IN ALTO
+//
+
 
 public class SettingsDialog extends JDialog {
     private JPanel contentPane;
@@ -19,6 +26,7 @@ public class SettingsDialog extends JDialog {
     private JLabel passLabel;
     private JLabel nPartiLabel;
     private JLabel modLabel;
+    private JLabel fileName;
 
     /**
      * Classe interna che implementa il listener per animare i campi del dialog a seconda della selezione della JComboBox.
@@ -71,8 +79,9 @@ public class SettingsDialog extends JDialog {
 
     /**
      * Costruttore chiamato durante l'inserimento di un nuovo valore nella tabella.
+     * @param att File che è elaborato attualmente.
      */
-    public SettingsDialog() {
+    public SettingsDialog(File att) {
         setContentPane(contentPane);
         setModal(true);             //blocca l'input nelle altre finestre
         getRootPane().setDefaultButton(buttonOK);       //nel pannello di base metto come bottone di default di chiusura quello di OK
@@ -116,6 +125,8 @@ public class SettingsDialog extends JDialog {
         passValue.setEnabled(false);
         nPartiLabel.setEnabled(false);
         nPartiValue.setEnabled(false);
+
+        fileName.setText(att.getPath());
     }
 
     /**
@@ -123,10 +134,10 @@ public class SettingsDialog extends JDialog {
      * @param tmp BufferedSplitter che sarà modificato, da cui prendo i dati da mostrare.
      */
     public SettingsDialog(BufferedSplitter tmp) {
-        this();
+        this(tmp.getStartFile());
 
-        passLabel.setEnabled(true);
-        passValue.setEnabled(true);
+        passLabel.setEnabled(false);
+        passValue.setEnabled(false);
 
         if(tmp.isParti()){
             dimLabel.setEnabled(false);
@@ -155,7 +166,7 @@ public class SettingsDialog extends JDialog {
      * @param c CryptoSplitter che sarà modificato, da cui prendo i dati da mostrare.
      */
     public SettingsDialog(CryptoSplitter c) {
-        this();
+        this(c.getStartFile());
 
         dimLabel.setEnabled(false);
         dimValue.setEnabled(false);
@@ -172,7 +183,7 @@ public class SettingsDialog extends JDialog {
      * @param z ZipSplitter che sarà modificato, da cui prendo i dati da mostrare.
      */
     public SettingsDialog(ZipSplitter z){
-        this();
+        this(z.getStartFile());
 
         dimLabel.setEnabled(false);
         dimValue.setEnabled(false);
@@ -183,6 +194,7 @@ public class SettingsDialog extends JDialog {
 
         modValue.setSelectedIndex(2);
     }
+
 
     //metodi get e set
 

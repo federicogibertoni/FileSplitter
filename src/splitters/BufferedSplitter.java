@@ -10,16 +10,38 @@ import static utils.Const.DIM_MAX_PAR;
  */
 public class BufferedSplitter extends Splitter implements Runnable {
 
+    /**
+     * Intero contenente la dimensione di ogni parte in cui sarà diviso il file iniziale.
+     */
     private int dimPar;
+
+    /**
+     * Long contenente il numero di parti uguali in cui dividere il file.
+     */
     private long nParti;
+
+    /**
+     * Booleano per capire se il file è da dividere in n parti o c'è una dimensione massima.
+     */
     private boolean parti;
 
+    /**
+     * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file.
+     * @param path Path del file da cui iniziare.
+     * @param dimPar Dimensione di ogni parte.
+     */
     public BufferedSplitter(String path, int dimPar){
         super(path);
         this.dimPar = dimPar;
         nParti = -1;
         parti = false;
     }
+
+    /**
+     * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere,
+     * @param path Path del file da cui iniziare.
+     * @param numPar Numero massimo di file da generare.
+     */
     public BufferedSplitter(String path, long numPar){
         super(path);
         File tmp = new File(path);
@@ -32,16 +54,27 @@ public class BufferedSplitter extends Splitter implements Runnable {
 
     /**
      * Costruttore dello Splitter.
-     * @param path Path del file da dividere.
+     * @param path Path del file.
      */
     public BufferedSplitter(String path){
         super(path);
     }
 
+    /**
+     * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file.
+     * @param f File da cui iniziare.
+     * @param dimPar Dimensione di ogni parte.
+     */
     public BufferedSplitter(File f, int dimPar){
         super(f);
         this.dimPar = dimPar;
     }
+
+    /**
+     * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere,
+     * @param f File da cui iniziare.
+     * @param numPar Numero massimo di file da generare.
+     */
     public BufferedSplitter(File f, long numPar){
         super(f);
         this.dimPar = (int)((f.length()/numPar)+(f.length()%numPar));
@@ -49,16 +82,24 @@ public class BufferedSplitter extends Splitter implements Runnable {
 
     /**
      * Costruttore dello Splitter.
-     * @param f File da dividere.
+     * @param f File di partenza.
      */
     public BufferedSplitter(File f){
         super(f);
     }
 
+    /**
+     * Metodo per ottenere la dimensione di ogni parte in cui sarà diviso il file iniziale.
+     * @return La dimensione di ogni parte.
+     */
     public int getDimPar() {
         return dimPar;
     }
 
+    /**
+     * Metodo con cui modificare la dimensione di ogni parte in cui sarà diviso il file iniziale.
+     * @param dimPar Nuovo valore della dimensione.
+     */
     public void setDimPar(int dimPar) {
         this.dimPar = dimPar;
     }
@@ -177,10 +218,18 @@ public class BufferedSplitter extends Splitter implements Runnable {
         }
     }
 
+    /**
+     * Metodo per capire se un file è del tipo di divisione in parti uguali o dimensioni massime.
+     * @return true se il file è da dividere il n parti uguali, false altrimenti.
+     */
     public boolean isParti() {
         return parti;
     }
 
+    /**
+     * Metodo per ottenre il numero di parti in cui dividere il file.
+     * @return Numero di parti in cui il file va diviso.
+     */
     public long getnParti() {
         return nParti;
     }

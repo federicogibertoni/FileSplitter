@@ -67,6 +67,9 @@ public abstract class Splitter implements Runnable{
      */
     abstract void merge();
 
+    /**
+     * Ogni Splitter dovrà implementarlo per poter implementare l'interfaccia Runnable.
+     */
     @Override
     public abstract void run();
 }

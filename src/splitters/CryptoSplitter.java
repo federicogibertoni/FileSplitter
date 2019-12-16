@@ -17,16 +17,32 @@ import java.security.*;
  */
 public class CryptoSplitter extends Splitter implements Runnable {
 
+    /**
+     * La password con cui si fa la cifratura o decifratura.
+     */
     private String pass;
 
+    /**
+     * Metodo per ottenere la password attuale
+     * @return Una String contenente la password.
+     */
     public String getPass() {
         return pass;
     }
 
+    /**
+     * Metodo per modificare la password.
+     * @param pass Nuova password da inserire.
+     */
     public void setPass(String pass) {
         this.pass = pass;
     }
 
+    /**
+     * Costruttore dello Splitter.
+     * @param path Path del file.
+     * @param pass Password con cui verrà gestito il file
+     */
     public CryptoSplitter(String path, String pass){
         super(path);
         this.pass = pass;
@@ -34,19 +50,25 @@ public class CryptoSplitter extends Splitter implements Runnable {
 
     /**
      * Costruttore dello Splitter.
-     * @param path Path del file da dividere.
+     * @param path Path del file.
      */
     public CryptoSplitter(String path){
         super(path);
     }
 
+    /**
+     * Costruttore dello Splitter.
+     * @param f File da cui iniziare.
+     * @param pass Password con cui verrà gestito il file.
+     */
     public CryptoSplitter(File f, String pass){
         super(f);
         this.pass = pass;
     }
+
     /**
      * Costruttore dello Splitter.
-     * @param f File da dividere.
+     * @param f File da cui iniziare.
      */
     public CryptoSplitter(File f){
         super(f);
