@@ -3,7 +3,6 @@ package splitters;
 import java.io.*;
 
 import static utils.Const.DIM_MAX_BUF;
-import static utils.Const.DIM_MAX_PAR;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer.
@@ -131,7 +130,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
-        int trasf = (int) startFile.length(), c = 1, length = 0, dimBuf = DIM_MAX_BUF;
+        int trasf = (int) startFile.length(), c = 1, length = 0, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
         byte[] buf = new byte[dimBuf];
 
         try {
@@ -147,7 +146,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
                     fos.close();
                     fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
                     fos.write(buf, dimPar, rem);
-                    dimPar = DIM_MAX_PAR-rem;         //reimposto la dimensione della partizione tenendo conto di quello che ho già scritto
+                    dimPar = dimParTmp-rem;         //reimposto la dimensione della partizione tenendo conto di quello che ho già scritto
                 }
             }
         } catch (IOException e) {

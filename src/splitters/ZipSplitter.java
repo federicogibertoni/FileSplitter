@@ -7,24 +7,49 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import static utils.Const.DIM_MAX_BUF;
-import static utils.Const.DIM_MAX_PAR;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer e comprime tutte le partizioni create.
  */
 public class ZipSplitter extends Splitter implements Runnable {
+
+    /**
+     * Intero contenente la dimensione di ogni parte in cui sarà diviso il file iniziale.
+     */
+    private int dimPar;
+
     /**
      * Costruttore dello Splitter.
      * @param f File da dividere.
+     * @param dimPar Dimensione di ogni parte.
      */
-    public ZipSplitter(File f){
+    public ZipSplitter(File f, int dimPar){
         super(f);
+        this.dimPar = dimPar;
+    }
+
+    public int getDimPar() {
+        return dimPar;
+    }
+
+    public void setDimPar(int dimPar) {
+        this.dimPar = dimPar;
     }
 
     /**
      * Costruttore dello Splitter.
      * @param path Path del file da dividere.
+     * @param dimPar Dimensione di ogni parte.
      */
+    public ZipSplitter(String path, int dimPar){
+        super(path);
+        this.dimPar = dimPar;
+    }
+
+    public ZipSplitter(File f) {
+        super(f);
+    }
+
     public ZipSplitter(String path){
         super(path);
     }
@@ -50,7 +75,7 @@ public class ZipSplitter extends Splitter implements Runnable {
 
         String outputFile = startFile.getName()+"1.par";    //nome della prima ZipEntry
 
-        int trasf = (int) startFile.length(), c = 1, i = 0, dimBuf = DIM_MAX_BUF, dimPar = DIM_MAX_PAR;
+        int trasf = (int) startFile.length(), c = 1, i = 0, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
 
         byte[] buf = new byte[dimBuf];
 
@@ -82,7 +107,7 @@ public class ZipSplitter extends Splitter implements Runnable {
                     //apro una nuova entry
                     zos.putNextEntry(new ZipEntry(startFile.getName() + "" + (c) + ".par"));
                     zos.write(buf, dimPar, rem);
-                    dimPar = DIM_MAX_PAR-rem;
+                    dimPar = dimParTmp-rem;
                 }
             }
         } catch (IOException e) {

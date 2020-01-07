@@ -42,6 +42,7 @@ public class SettingsDialog extends JDialog {
         public void actionPerformed(ActionEvent e) {
             switch (modValue.getSelectedIndex()){
                 case 0:         //BufferedSplitter con dimensione specificata
+                case 2:         //ZipSplitter
                     dimLabel.setEnabled(true);
                     dimValue.setEnabled(true);
                     passLabel.setEnabled(false);
@@ -50,18 +51,10 @@ public class SettingsDialog extends JDialog {
                     nPartiValue.setEnabled(false);
                     break;
                 case 1:         //CryptoSplitter
-                    dimLabel.setEnabled(false);
-                    dimValue.setEnabled(false);
+                    dimLabel.setEnabled(true);
+                    dimValue.setEnabled(true);
                     passLabel.setEnabled(true);
                     passValue.setEnabled(true);
-                    nPartiLabel.setEnabled(false);
-                    nPartiValue.setEnabled(false);
-                    break;
-                case 2:         //ZipSplitter
-                    dimLabel.setEnabled(false);
-                    dimValue.setEnabled(false);
-                    passLabel.setEnabled(false);
-                    passValue.setEnabled(false);
                     nPartiLabel.setEnabled(false);
                     nPartiValue.setEnabled(false);
                     break;
@@ -83,8 +76,8 @@ public class SettingsDialog extends JDialog {
      */
     public SettingsDialog(File att) {
         setContentPane(contentPane);
-        setModal(true);             //blocca l'input nelle altre finestre
-        getRootPane().setDefaultButton(buttonOK);       //nel pannello di base metto come bottone di default di chiusura quello di OK
+        setModal(true);         //blocca l'input nelle altre finestre
+        getRootPane().setDefaultButton(buttonOK);  //nel pannello di base metto come bottone di default di chiusura quello di OK
 
         //aggiungo listener ai bottoni
         buttonOK.addActionListener(new ActionListener() {
@@ -168,12 +161,12 @@ public class SettingsDialog extends JDialog {
     public SettingsDialog(CryptoSplitter c) {
         this(c.getStartFile());
 
-        dimLabel.setEnabled(false);
-        dimValue.setEnabled(false);
         passLabel.setEnabled(true);
         passValue.setEnabled(true);
         nPartiLabel.setEnabled(false);
         nPartiValue.setEnabled(false);
+
+        dimValue.setText(String.valueOf(c.getDimPar()));
 
         modValue.setSelectedIndex(1);
     }
@@ -185,12 +178,12 @@ public class SettingsDialog extends JDialog {
     public SettingsDialog(ZipSplitter z){
         this(z.getStartFile());
 
-        dimLabel.setEnabled(false);
-        dimValue.setEnabled(false);
         passLabel.setEnabled(false);
         passValue.setEnabled(false);
         nPartiLabel.setEnabled(false);
         nPartiValue.setEnabled(false);
+
+        dimValue.setText(String.valueOf(z.getDimPar()));
 
         modValue.setSelectedIndex(2);
     }
@@ -270,3 +263,6 @@ public class SettingsDialog extends JDialog {
         this.modLabel = modLabel;
     }
 }
+
+
+//rifare la grafica delle form
