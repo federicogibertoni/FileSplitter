@@ -105,7 +105,7 @@ public class QueueTableModel extends DefaultTableModel {
                 return re.getClass().getCanonicalName();
             case 2: return (int)re.getStartFile().length();
             case 3: return re.getStartFile().getAbsolutePath();
-            case 4: return re.getProgressBar();
+            case 4: return re.getProgress();
             default: return null;
         }
     }

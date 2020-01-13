@@ -8,24 +8,57 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.io.File;
 
-
-//
-//METTERE IL NOME DEL FILE CHE SI STA MODIFICANDO O AGGIUNGENDO IN ALTO
-//
-
-
+/**
+ * Classe che implementa il Dialog che viene aperto quando si aggiunge un nuovo file alla coda oppure se si vogliono modificare le impostazioni.
+ */
 public class SettingsDialog extends JDialog {
+    /**
+     * Pannello che contiene il Dialog.
+     */
     private JPanel contentPane;
+    /**
+     * Bottone per dare la conferma dei dati inseriti.
+     */
     private JButton buttonOK;
+    /**
+     * Bottone per annullare l'inserimento dei dati inseriti.
+     */
     private JButton buttonCancel;
+    /**
+     * ComboBox che permette di effettuare la scelta del tipo di divisione da effettuare.
+     */
     private JComboBox modValue;
+    /**
+     * Campo di testo che permette di specificare la dimensione massima di ogni file della divisione.
+     */
     private JTextField dimValue;
+    /**
+     * Campo di testo per inserire la password nella codifica dei file.
+     */
     private JPasswordField passValue;
+    /**
+     * Campo di testo per inserire il numero di parti uguali in cui dividere il file nella coda.
+     */
     private JTextField nPartiValue;
+    /**
+     * Label che andrà ad indicare il campo di testo per inserire la dimensione.
+     */
     private JLabel dimLabel;
+    /**
+     * Label che andrà ad indicare il campo di testo per inserire la password.
+     */
     private JLabel passLabel;
+    /**
+     * Label che andrà ad indicare il campo di testo per inserire il numero di parti nella divisione.
+     */
     private JLabel nPartiLabel;
+    /**
+     * Label che andrà ad indicare la ComboBox per la scelta della modalità di divisione.
+     */
     private JLabel modLabel;
+    /**
+     * Label che andrà ad indicare il file attuale che si sta trattando.
+     */
     private JLabel fileName;
 
     /**
@@ -71,24 +104,82 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
+     * Metodo privato per creare delle istanze di ogni componente del Dialog.
+     */
+    private void initComponents() {
+        contentPane = new JPanel();
+        contentPane.setOpaque(true);
+        this.setContentPane(contentPane);
+
+        setModal(true);         //blocca l'input nelle altre finestre
+
+        buttonCancel = new JButton("Annulla");
+        buttonOK = new JButton("Ok");
+        getRootPane().setDefaultButton(buttonOK);  //nel pannello di base metto come bottone di default di chiusura quello di OK
+
+        modValue = new JComboBox();
+        modValue.addItem("Splitter");
+        modValue.addItem("Crypter");
+        modValue.addItem("Zipper");
+        modValue.addItem("Parts");
+
+        dimValue = new JTextField();
+        dimValue.setColumns(30);
+
+        passValue = new JPasswordField();
+        passValue.setColumns(30);
+
+        nPartiValue = new JTextField();
+        nPartiValue.setColumns(30);
+
+        modLabel = new JLabel("Modalità");
+        dimLabel = new JLabel("Dimensione");
+        passLabel = new JLabel("Password");
+        nPartiLabel = new JLabel("N. Parti");
+        fileName = new JLabel();
+    }
+
+    /**
+     * Metodo privato per aggiungere tutte le istanze create al pannello del Dialog.
+     */
+    private void addComponents() {
+        add(fileName);
+
+        add(modLabel);
+        add(modValue);
+
+        add(dimLabel);
+        add(dimValue);
+
+        add(passLabel);
+        add(passValue);
+
+        add(nPartiLabel);
+        add(nPartiValue);
+
+        add(buttonOK);
+        add(buttonCancel);
+    }
+
+    /**
      * Costruttore chiamato durante l'inserimento di un nuovo valore nella tabella.
      * @param att File che è elaborato attualmente.
      */
     public SettingsDialog(File att) {
-        setContentPane(contentPane);
-        setModal(true);         //blocca l'input nelle altre finestre
-        getRootPane().setDefaultButton(buttonOK);  //nel pannello di base metto come bottone di default di chiusura quello di OK
+        super();
+
+        initComponents();
+        addComponents();
 
         //aggiungo listener ai bottoni
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
-
         buttonCancel.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
+            }
+        });
+        buttonOK.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                onOK();
             }
         });
 
@@ -188,81 +279,49 @@ public class SettingsDialog extends JDialog {
         modValue.setSelectedIndex(2);
     }
 
-
-    //metodi get e set
-
+    /**
+     * Metodo per ottenere il valore della ComboBox per la scelta della modalità.
+     * @return L'istanza di ComboBox che rappresenta la selezione.
+     */
     public JComboBox getModValue() {
         return modValue;
     }
 
-    public void setModValue(JComboBox modValue) {
-        this.modValue = modValue;
-    }
-
+    /**
+     * Metodo che viene chiamato nel caso in cui venga chiuso positivamente il Dialog.
+     */
     private void onOK() {
         dispose();
     }
 
+    /**
+     * Metodo che viene chiamato nel caso in cui venga chiuso negativamente il Dialog.
+     */
     private void onCancel() {
         dispose();
     }
 
+    /**
+     * Metodo per ottenere la dimensione massima di ogni file nella divisone.
+     * @return Il valore della dimensione massima di ogni file.
+     */
     public JTextField getDimValue() {
         return dimValue;
     }
 
-    public void setDimValue(JTextField dimValue) {
-        this.dimValue = dimValue;
-    }
-
+    /**
+     * Metodo per ottenere la password che è stata inserita dall'utente.
+     * @return L'oggetto che contiene la password inserita.
+     */
     public JPasswordField getPassValue() {
         return passValue;
     }
 
-    public void setPassValue(JPasswordField passValue) {
-        this.passValue = passValue;
-    }
-
+    /**
+     * Metodo per ottenere il numero massimo di parti in cui dividere il file.
+     * @return Il componente che contiene il valore del numero di parti.
+     */
     public JTextField getnPartiValue() {
         return nPartiValue;
     }
-
-    public void setnPartiValue(JTextField nPartiValue) {
-        this.nPartiValue = nPartiValue;
-    }
-
-    public JLabel getDimLabel() {
-        return dimLabel;
-    }
-
-    public void setDimLabel(JLabel dimLabel) {
-        this.dimLabel = dimLabel;
-    }
-
-    public JLabel getPassLabel() {
-        return passLabel;
-    }
-
-    public void setPassLabel(JLabel passLabel) {
-        this.passLabel = passLabel;
-    }
-
-    public JLabel getnPartiLabel() {
-        return nPartiLabel;
-    }
-
-    public void setnPartiLabel(JLabel nPartiLabel) {
-        this.nPartiLabel = nPartiLabel;
-    }
-
-    public JLabel getModLabel() {
-        return modLabel;
-    }
-
-    public void setModLabel(JLabel modLabel) {
-        this.modLabel = modLabel;
-    }
 }
-
-
-//rifare la grafica delle form
