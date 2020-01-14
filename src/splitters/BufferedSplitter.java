@@ -138,6 +138,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
                 if((dimPar-length) >= 0) {                  //se lo spazio non è ancora finito scrivo normalmente
                     fos.write(buf, 0, length);
                     dimPar -= length;
+                    //calcolare la percentuale con 1-valore
                 }
                 else{
                     //se lo spazio è finito devo svuotare il buffer finché può e finire di svuotarlo nel nuovo stream

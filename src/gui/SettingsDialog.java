@@ -140,25 +140,66 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Metodo privato per aggiungere tutte le istanze create al pannello del Dialog.
+     * Metodo privato che imposta il layout per tutto il dialog.
+     * Fa uso di un GroupLayout.
      */
-    private void addComponents() {
-        add(fileName);
+    private void setDialogLayout(){
+        GroupLayout groupLayout = new GroupLayout(contentPane);
+        groupLayout.setAutoCreateGaps(true);
+        groupLayout.setAutoCreateContainerGaps(true);
 
-        add(modLabel);
-        add(modValue);
+        contentPane.setLayout(groupLayout);
 
-        add(dimLabel);
-        add(dimValue);
+        groupLayout.setHorizontalGroup(
+                groupLayout.createSequentialGroup()
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                                .addComponent(modLabel)
+                                .addComponent(dimLabel)
+                                .addComponent(passLabel)
+                                .addComponent(nPartiLabel)
+                                .addComponent(buttonOK)
+                )
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                                .addComponent(fileName)
+                                .addComponent(modValue)
+                                .addComponent(dimValue)
+                                .addComponent(passValue)
+                                .addComponent(nPartiValue)
+                                .addComponent(buttonCancel)
+                )
+        );
 
-        add(passLabel);
-        add(passValue);
-
-        add(nPartiLabel);
-        add(nPartiValue);
-
-        add(buttonOK);
-        add(buttonCancel);
+        groupLayout.setVerticalGroup(
+                groupLayout.createSequentialGroup()
+                .addComponent(fileName)
+                .addGroup(
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(modLabel)
+                            .addComponent(modValue)
+                )
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                            .addComponent(dimLabel)
+                            .addComponent(dimValue)
+                )
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                            .addComponent(passLabel)
+                            .addComponent(passValue)
+                )
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                            .addComponent(nPartiLabel)
+                            .addComponent(nPartiValue)
+                )
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                           .addComponent(buttonOK)
+                           .addComponent(buttonCancel)
+                )
+        );
     }
 
     /**
@@ -169,7 +210,8 @@ public class SettingsDialog extends JDialog {
         super();
 
         initComponents();
-        addComponents();
+
+        setDialogLayout();
 
         //aggiungo listener ai bottoni
         buttonCancel.addActionListener(new ActionListener() {

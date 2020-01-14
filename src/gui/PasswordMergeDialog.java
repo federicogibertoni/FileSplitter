@@ -59,13 +59,53 @@ public class PasswordMergeDialog extends JDialog {
     }
 
     /**
+     * Metodo privato che imposta il layout per tutto il dialog.
+     * Fa uso di un GroupLayout.
+     */
+    private void setDialogLayout(){
+        GroupLayout groupLayout = new GroupLayout(contentPane);
+        groupLayout.setAutoCreateGaps(true);
+        groupLayout.setAutoCreateContainerGaps(true);
+
+        contentPane.setLayout(groupLayout);
+
+        groupLayout.setHorizontalGroup(
+                groupLayout.createSequentialGroup()
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                        .addComponent(passLabel)
+                        .addComponent(buttonOK)
+                )
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                        .addComponent(passValue)
+                        .addComponent(buttonCancel)
+                )
+        );
+
+        groupLayout.setVerticalGroup(
+                groupLayout.createSequentialGroup()
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                        .addComponent(passLabel)
+                        .addComponent(passValue)
+                )
+                .addGroup(
+                        groupLayout.createParallelGroup()
+                        .addComponent(buttonOK)
+                        .addComponent(buttonCancel)
+                )
+        );
+    }
+
+    /**
      * Costruttore del Dialog che viene chiamato quando bisogna riunire i pezzi di file criptati.
      */
     public PasswordMergeDialog() {
         super();
 
         initComponents();
-        addComponents();
+        setDialogLayout();
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
