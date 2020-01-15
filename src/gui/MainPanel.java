@@ -72,7 +72,8 @@ public class MainPanel extends JPanel {
 
             for(File att : scelte){
                 SettingsDialog dialog = new SettingsDialog(att);
-                dialog.setBounds(0, 0, 500, 500);
+                dialog.pack();
+                dialog.setLocation(0, 0);
                 dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
 
@@ -192,7 +193,7 @@ public class MainPanel extends JPanel {
                 case ".crypto":
                     PasswordMergeDialog dialog = new PasswordMergeDialog();
                     dialog.pack();
-                    dialog.setBounds(0, 0, 200, 200);
+                    dialog.setLocation(0, 0);
                     dialog.setLocationRelativeTo(null);
                     dialog.setVisible(true);
 

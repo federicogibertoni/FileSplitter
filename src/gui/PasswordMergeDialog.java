@@ -64,20 +64,18 @@ public class PasswordMergeDialog extends JDialog {
      */
     private void setDialogLayout(){
         GroupLayout groupLayout = new GroupLayout(contentPane);
-        groupLayout.setAutoCreateGaps(true);
-        groupLayout.setAutoCreateContainerGaps(true);
 
         contentPane.setLayout(groupLayout);
 
         groupLayout.setHorizontalGroup(
                 groupLayout.createSequentialGroup()
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(passLabel)
                         .addComponent(buttonOK)
                 )
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                         .addComponent(passValue)
                         .addComponent(buttonCancel)
                 )
@@ -86,16 +84,19 @@ public class PasswordMergeDialog extends JDialog {
         groupLayout.setVerticalGroup(
                 groupLayout.createSequentialGroup()
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                         .addComponent(passLabel)
                         .addComponent(passValue)
                 )
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                         .addComponent(buttonOK)
                         .addComponent(buttonCancel)
                 )
         );
+
+        groupLayout.setAutoCreateGaps(true);
+        groupLayout.setAutoCreateContainerGaps(true);
     }
 
     /**

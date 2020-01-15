@@ -5,6 +5,7 @@ import splitters.CryptoSplitter;
 import splitters.ZipSplitter;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
@@ -145,15 +146,13 @@ public class SettingsDialog extends JDialog {
      */
     private void setDialogLayout(){
         GroupLayout groupLayout = new GroupLayout(contentPane);
-        groupLayout.setAutoCreateGaps(true);
-        groupLayout.setAutoCreateContainerGaps(true);
 
         contentPane.setLayout(groupLayout);
 
         groupLayout.setHorizontalGroup(
                 groupLayout.createSequentialGroup()
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(modLabel)
                                 .addComponent(dimLabel)
                                 .addComponent(passLabel)
@@ -161,7 +160,7 @@ public class SettingsDialog extends JDialog {
                                 .addComponent(buttonOK)
                 )
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
                                 .addComponent(fileName)
                                 .addComponent(modValue)
                                 .addComponent(dimValue)
@@ -180,26 +179,29 @@ public class SettingsDialog extends JDialog {
                             .addComponent(modValue)
                 )
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(dimLabel)
                             .addComponent(dimValue)
                 )
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(passLabel)
                             .addComponent(passValue)
                 )
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(nPartiLabel)
                             .addComponent(nPartiValue)
                 )
                 .addGroup(
-                        groupLayout.createParallelGroup()
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
                            .addComponent(buttonOK)
                            .addComponent(buttonCancel)
                 )
         );
+
+        groupLayout.setAutoCreateGaps(true);
+        groupLayout.setAutoCreateContainerGaps(true);
     }
 
     /**
