@@ -1,7 +1,6 @@
 package splitters;
 
 import java.io.*;
-import java.util.Dictionary;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -28,12 +27,12 @@ public class ZipSplitter extends Splitter implements Runnable {
         this.dimPar = dimPar;
     }
 
+    /**
+     * Ritorna la dimensione di ogni parte dello split.
+     * @return Dimensione, uguale per ogni file.
+     */
     public int getDimPar() {
         return dimPar;
-    }
-
-    public void setDimPar(int dimPar) {
-        this.dimPar = dimPar;
     }
 
     /**
@@ -46,10 +45,18 @@ public class ZipSplitter extends Splitter implements Runnable {
         this.dimPar = dimPar;
     }
 
+    /**
+     * Costruttore dello Splitter.
+     * @param f File da dividere.
+     */
     public ZipSplitter(File f) {
         super(f);
     }
 
+    /**
+     * Costruttore dello Splitter.
+     * @param path Path del file da dividere.
+     */
     public ZipSplitter(String path){
         super(path);
     }
@@ -75,7 +82,7 @@ public class ZipSplitter extends Splitter implements Runnable {
 
         String outputFile = startFile.getName()+"1.par";    //nome della prima ZipEntry
 
-        int trasf = (int) startFile.length(), c = 1, i = 0, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
+        int c = 1, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
 
         byte[] buf = new byte[dimBuf];
 
@@ -96,11 +103,14 @@ public class ZipSplitter extends Splitter implements Runnable {
                 if((dimPar-length) >= 0) {          //se lo spazio non è ancora finito scrivo normalmente
                     zos.write(buf, 0, length);
                     dimPar -= length;
+
+                    progress += length;
                 }
                 else {
                     //se lo spazio è finito devo svuotare il buffer finché può e finire di svuotarlo nel nuovo stream
                     int rem = length-dimPar;
                     zos.write(buf, 0, dimPar);
+                    progress += dimPar;
                     zos.closeEntry();               //chiudo la entry attuale visto che è finita
                     zos.close();
                     zos = new ZipOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.zip"));
@@ -108,6 +118,8 @@ public class ZipSplitter extends Splitter implements Runnable {
                     zos.putNextEntry(new ZipEntry(startFile.getName() + "" + (c) + ".par"));
                     zos.write(buf, dimPar, rem);
                     dimPar = dimParTmp-rem;
+
+                    progress += rem;
                 }
             }
         } catch (IOException e) {

@@ -90,7 +90,7 @@ public class QueueTableModel extends DefaultTableModel {
      */
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        Splitter re = (Splitter) v.elementAt(rowIndex);
+        Splitter re = v.elementAt(rowIndex);
         switch (columnIndex){
             case 0: return re.getStartFile().getName();
             case 1:
@@ -103,25 +103,39 @@ public class QueueTableModel extends DefaultTableModel {
                         return "Zip";
                 }
                 return re.getClass().getCanonicalName();
-            case 2: return (int)re.getStartFile().length();
+            case 2: return (int) re.getStartFile().length();
             case 3: return re.getStartFile().getAbsolutePath();
-            case 4: return re.getProgress();
+            case 4: return (re.getProgress()/re.getStartFile().length()*100);
             default: return null;
         }
     }
 
-    /*@Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-
+    /**
+     * Metodo usato per aggiornare il valore della 4° colonna, contenente la JProgressBar.
+     * @param index Indice del file di cui c'è da aggiornare lo stato.
+     * @param newValue Nuovo valore da inserire nella cella.
+     */
+    public void updateStatus(int index, int newValue) {
+        if(v.elementAt(index) != null){
+            setValueAt(newValue, index, 4);
+            fireTableCellUpdated(index, 4);
+        }
     }
 
+    /**
+     * Metodo per aggiornare i valori della tabella.
+     * @param value Nuovo valore da impostare.
+     * @param rowIndex Riga da aggiornare.
+     * @param columnIndex Colonna da aggiornare.
+     */
     @Override
-    public void addTableModelListener(TableModelListener l) {
-
+    public void setValueAt(Object value, int rowIndex, int columnIndex) {
+        switch (columnIndex) {
+            case 4:
+                if (value instanceof Double) {
+                    v.elementAt(rowIndex).setProgress((double) value);
+                }
+                break;
+        }
     }
-
-    @Override
-    public void removeTableModelListener(TableModelListener l) {
-
-    }*/
 }

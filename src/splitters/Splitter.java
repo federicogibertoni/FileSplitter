@@ -15,13 +15,21 @@ public abstract class Splitter implements Runnable{
     /**
      * Progresso nella divisione del file.
      */
-    protected long progress;
+    protected double progress = 0;
 
-    public long getProgress() {
+    /**
+     * Metodo che ritorna il numero di byte letti finora.
+     * @return Numero di byte letti.
+     */
+    public double getProgress() {
         return progress;
     }
 
-    public void setProgress(long progress) {
+    /**
+     * Metodo che setta il valore del progresso nella divisione di un file.
+     * @param progress Valore attuale del progresso.
+     */
+    public void setProgress(double progress) {
         this.progress = progress;
     }
 

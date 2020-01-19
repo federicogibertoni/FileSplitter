@@ -96,14 +96,6 @@ public class BufferedSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Metodo con cui modificare la dimensione di ogni parte in cui sarà diviso il file iniziale.
-     * @param dimPar Nuovo valore della dimensione.
-     */
-    public void setDimPar(int dimPar) {
-        this.dimPar = dimPar;
-    }
-
-    /**
      * Metodo che sovrascrive quello implementato dall'interfaccia Runnable.
      * Chiama il metodo split().
      */
@@ -130,7 +122,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
-        int trasf = (int) startFile.length(), c = 1, length = 0, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
+        int c = 1, length = 0, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
         byte[] buf = new byte[dimBuf];
 
         try {
@@ -138,16 +130,20 @@ public class BufferedSplitter extends Splitter implements Runnable {
                 if((dimPar-length) >= 0) {                  //se lo spazio non è ancora finito scrivo normalmente
                     fos.write(buf, 0, length);
                     dimPar -= length;
-                    //calcolare la percentuale con 1-valore
+
+                    progress += length;
                 }
                 else{
                     //se lo spazio è finito devo svuotare il buffer finché può e finire di svuotarlo nel nuovo stream
                     int rem = length-dimPar;
                     fos.write(buf, 0, dimPar);
+                    progress += dimPar;
                     fos.close();
                     fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
                     fos.write(buf, dimPar, rem);
                     dimPar = dimParTmp-rem;         //reimposto la dimensione della partizione tenendo conto di quello che ho già scritto
+
+                    progress += rem;
                 }
             }
         } catch (IOException e) {

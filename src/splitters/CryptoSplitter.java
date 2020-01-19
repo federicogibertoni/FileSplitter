@@ -21,12 +21,12 @@ public class CryptoSplitter extends Splitter implements Runnable {
      */
     private int dimPar;
 
+    /**
+     * Ritorna la dimensione di ogni parte dello split.
+     * @return Dimensione, uguale per ogni file.
+     */
     public int getDimPar() {
         return dimPar;
-    }
-
-    public void setDimPar(int dimPar) {
-        this.dimPar = dimPar;
     }
 
     /**
@@ -118,8 +118,6 @@ public class CryptoSplitter extends Splitter implements Runnable {
         FileOutputStream fos = null;
         Key key = null;
 
-        //System.out.println("Inserisci una password per criptare");
-        //String pass = null;                 //chiedo una password all'utente
         byte[] digestedPass = MD5(pass);           //faccio l'hash a 128 bit della password dell'utente
         key = new SecretKeySpec(digestedPass,0,digestedPass.length, "AES");     //creo una chiave
 
@@ -146,7 +144,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
-        int trasf = (int) startFile.length(), c = 1, i = 0, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
+        int c = 1, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
         byte[] buf = new byte[dimBuf];
         try {
             fos.write(iv);              //scrivo l'IV all'inizio del file per salvarlo
@@ -161,15 +159,20 @@ public class CryptoSplitter extends Splitter implements Runnable {
                 if((dimPar-length) >= 0) {          //se lo spazio non è ancora finito scrivo normalmente
                     cos.write(buf, 0, length);
                     dimPar -= length;
+
+                    progress += length;
                 }
                 else{
                     //se lo spazio è finito devo svuotare il buffer finché può e finire di svuotarlo nel nuovo stream
                     int rem = length-dimPar;
                     cos.write(buf, 0, dimPar);
+                    progress += dimPar;
                     cos.close();
                     cos = new CipherOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.crypto"), cipher);
                     cos.write(buf, dimPar, rem);
                     dimPar = dimParTmp - rem;
+
+                    progress += rem;
                 }
             }
         } catch (IOException e) {

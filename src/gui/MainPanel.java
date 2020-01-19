@@ -6,9 +6,12 @@ import splitters.Splitter;
 import splitters.ZipSplitter;
 
 import javax.swing.*;
+import javax.swing.table.TableCellRenderer;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.List;
 import java.util.Vector;
 
 /**
@@ -84,23 +87,84 @@ public class MainPanel extends JPanel {
         }
     }
 
+    /*
+    * https://stackoverflow.com/questions/20260372/swingworker-progressbar
+    * https://docs.oracle.com/javase/7/docs/api/javax/swing/SwingWorker.html#publish(V...)
+    * http://www.herongyang.com/Swing/SwingWorker-Example-using-JProgressBar.html
+    * https://docs.oracle.com/javase/7/docs/api/javax/swing/table/TableCellRenderer.html
+    *
+    * https://stackoverflow.com/questions/13753562/adding-progress-bar-to-each-table-cell-for-file-progress-java
+    */
+
     /**
+     * Classe per effettuare la divisione dei file su thread paralleli e nel frattempo aggiornare la grafica della tabella.
+     */
+    private class StartWorker extends SwingWorker<Boolean, Integer>{
+        /**
+         * Indice della riga rappresentante il file da dividere nell'array di tutti i files.
+         */
+        private int index;
+
+        /**
+         * Costruttore dello SwingWorker.
+         * @param i Indice della riga rappresentante il file da dividere.
+         */
+        public StartWorker(int i){
+            index = i;
+        }
+
+        /**
+         * Metodo che esegue i calcoli del componente su un thread parallelo e nel frattempo invia i risultati parziali al metodo process() tramite publish().
+         * Usato per far partire le divisioni dei file nella coda e seguire il loro andamento.
+         * @return Ritorna il valore sullo stato dell'esecuzione del thread parallelo, se è finito o meno.
+         * @throws Exception
+         */
+        @Override
+        protected Boolean doInBackground() throws Exception {
+            setProgress(0);
+
+            Thread t = new Thread(v.elementAt(index));
+            t.start();
+
+            while(t.getState() != Thread.State.TERMINATED){
+                //Thread.sleep(100);
+                double progress = (v.elementAt(index).getProgress() / v.elementAt(index).getStartFile().length() * 100f);
+                setProgress((int)progress);
+                publish((int)progress);
+            }
+
+            setProgress(100);
+            publish(100);
+            return true;
+        }
+
+        /**
+         * Metodo invocato da publish() per aggiornare su un thread parallelo a quello di esecuzione la grafica.
+         * @param chunks Nuovo valore da inserire.
+         */
+        @Override
+        protected void process(List<Integer> chunks){
+            data.updateStatus(index, chunks.get(0));
+        }
+    }
+
+    /**
+     *
      * Listener che viene agganciato al bottone per avviare il processo di split/merge.
      */
     private class StartActionListener implements ActionListener {
 
         /**
          * Una volta premuto il bottone per la partenza viene svuotata tutta la coda facendo partire la divisione su un thread diverso per ogni file.
-         * Alla fine il vettore è svuotato e la tabella aggiornata.
          * @param e Evento che è stato generato.
          */
         @Override
         public void actionPerformed(ActionEvent e) {
             for(Splitter sp : v){
-                sp.run();
+                new StartWorker(v.indexOf(sp)).execute();
             }
-            v.removeAllElements();
-            data.fireTableDataChanged();
+            //v.removeAllElements();
+            //data.fireTableDataChanged();
         }
     }
 
@@ -211,6 +275,35 @@ public class MainPanel extends JPanel {
     }
 
     /**
+     * Classe che implementa il Render per una cella specifica della tabella che contiene la JProgressBar.
+     */
+    private class ProgressCellRender extends JProgressBar implements TableCellRenderer {
+        /**
+         * Metodo che crea la JProgressBar con un certo valore iniziale oppure con un valore passato.
+         * @param table La tabella su cui si sta lavorando.
+         * @param value Il valore del campo da aggiornare.
+         * @param isSelected Valore per capire se la cella è selezionata.
+         * @param hasFocus Valore per capire se la cella ha il focus.
+         * @param row Indice della riga.
+         * @param column Indice della colonna.
+         * @return Il componente da inserire nella cella specificata.
+         */
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            setStringPainted(true);
+            int progress = 0;
+            if (value instanceof Double) {
+                progress = (int) Math.round(((Double) value));
+            }else
+            if (value instanceof Integer) {
+                progress = (int) value;
+            }
+            setValue(progress);
+            return this;
+        }
+    }
+
+    /**
      * Costruttore del pannello che inizializza la tabella e aggiunge i bottoni.
      */
     public MainPanel(){
@@ -219,6 +312,9 @@ public class MainPanel extends JPanel {
         data = new QueueTableModel(col, 0, v);
         tab = new JTable(data);
         tab.setSize(800, 500);
+
+        tab.getColumn("Progresso").setCellRenderer(new ProgressCellRender());
+
         add(tab);
         add(new JScrollPane(tab));
 
