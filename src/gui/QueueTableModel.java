@@ -5,6 +5,8 @@ import splitters.Splitter;
 import javax.swing.table.DefaultTableModel;
 import java.util.Vector;
 
+import static utils.Const.PROGRESS_BAR_COLUMN;
+
 /**
  * Classe che estende DefaultTableModel, implementa il modello attuale della tabella con 5 colonne.
  */
@@ -111,14 +113,14 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Metodo usato per aggiornare il valore della 4° colonna, contenente la JProgressBar.
+     * Metodo usato per aggiornare il valore della colonna contenente la JProgressBar.
      * @param index Indice del file di cui c'è da aggiornare lo stato.
      * @param newValue Nuovo valore da inserire nella cella.
      */
     public void updateStatus(int index, int newValue) {
         if(v.elementAt(index) != null){
-            setValueAt(newValue, index, 4);
-            fireTableCellUpdated(index, 4);
+            setValueAt(newValue, index, PROGRESS_BAR_COLUMN);
+            fireTableCellUpdated(index, PROGRESS_BAR_COLUMN);
         }
     }
 
@@ -131,7 +133,7 @@ public class QueueTableModel extends DefaultTableModel {
     @Override
     public void setValueAt(Object value, int rowIndex, int columnIndex) {
         switch (columnIndex) {
-            case 4:
+            case PROGRESS_BAR_COLUMN:
                 if (value instanceof Double) {
                     v.elementAt(rowIndex).setProgress((double) value);
                 }

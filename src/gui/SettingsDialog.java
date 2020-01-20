@@ -149,7 +149,7 @@ public class SettingsDialog extends JDialog {
 
         contentPane.setLayout(groupLayout);
 
-        groupLayout.setHorizontalGroup(
+        groupLayout.setHorizontalGroup(             //devo creare un gruppo per creare delle "colonne" virtuali
                 groupLayout.createSequentialGroup()
                 .addGroup(
                         groupLayout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -170,7 +170,7 @@ public class SettingsDialog extends JDialog {
                 )
         );
 
-        groupLayout.setVerticalGroup(
+        groupLayout.setVerticalGroup(                   //devo creare un gruppo per creare delle "righe" virtuali
                 groupLayout.createSequentialGroup()
                 .addComponent(fileName)
                 .addGroup(
@@ -200,8 +200,8 @@ public class SettingsDialog extends JDialog {
                 )
         );
 
-        groupLayout.setAutoCreateGaps(true);
-        groupLayout.setAutoCreateContainerGaps(true);
+        groupLayout.setAutoCreateGaps(true);                    //spaziatura tra i componenti
+        groupLayout.setAutoCreateContainerGaps(true);           //non far toccare i bordi
     }
 
     /**

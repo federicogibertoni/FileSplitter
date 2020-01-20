@@ -30,7 +30,7 @@ public class MainPanel extends JPanel {
     private Vector<Splitter> v = new Vector<>();
 
     /**
-     * Implementazione della tabella.
+     * Implementazione della tabella che rappresenta la coda di divisione dei file.
      */
     private JTable tab;
 
@@ -161,7 +161,8 @@ public class MainPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             for(Splitter sp : v){
-                new StartWorker(v.indexOf(sp)).execute();
+                if(sp.getProgress() == 0)
+                    new StartWorker(v.indexOf(sp)).execute();
             }
             //v.removeAllElements();
             //data.fireTableDataChanged();
@@ -218,7 +219,7 @@ public class MainPanel extends JPanel {
 
                     //creo il Dialog
                     sd.pack();
-                    sd.setBounds(0, 0, 500, 500);
+                    sd.setLocation(0, 0);
                     sd.setLocationRelativeTo(null);
                     sd.setVisible(true);
 
