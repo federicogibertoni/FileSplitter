@@ -20,11 +20,41 @@ public class ZipSplitter extends Splitter implements Runnable {
     /**
      * Costruttore dello Splitter.
      * @param f File da dividere.
+     * @param split true se il file è da dividere, false se è da unire.
      * @param dimPar Dimensione di ogni parte.
      */
-    public ZipSplitter(File f, int dimPar){
-        super(f);
+    public ZipSplitter(File f, boolean split, int dimPar){
+        super(f, split);
         this.dimPar = dimPar;
+    }
+
+    /**
+     * Costruttore dello Splitter.
+     * @param path Path del file da dividere.
+     * @param split true se il file è da dividere, false se è da unire.
+     * @param dimPar Dimensione di ogni parte.
+     */
+    public ZipSplitter(String path, boolean split, int dimPar){
+        super(path, split);
+        this.dimPar = dimPar;
+    }
+
+    /**
+     * Costruttore dello Splitter.
+     * @param f File da dividere.
+     * @param split true se il file è da dividere, false se è da unire.
+     */
+    public ZipSplitter(File f, boolean split) {
+        super(f, split);
+    }
+
+    /**
+     * Costruttore dello Splitter.
+     * @param path Path del file da dividere.
+     * @param split true se il file è da dividere, false se è da unire.
+     */
+    public ZipSplitter(String path, boolean split){
+        super(path, split);
     }
 
     /**
@@ -33,44 +63,6 @@ public class ZipSplitter extends Splitter implements Runnable {
      */
     public int getDimPar() {
         return dimPar;
-    }
-
-    /**
-     * Costruttore dello Splitter.
-     * @param path Path del file da dividere.
-     * @param dimPar Dimensione di ogni parte.
-     */
-    public ZipSplitter(String path, int dimPar){
-        super(path);
-        this.dimPar = dimPar;
-    }
-
-    /**
-     * Costruttore dello Splitter.
-     * @param f File da dividere.
-     */
-    public ZipSplitter(File f) {
-        super(f);
-    }
-
-    /**
-     * Costruttore dello Splitter.
-     * @param path Path del file da dividere.
-     */
-    public ZipSplitter(String path){
-        super(path);
-    }
-
-    /**
-     * Metodo che sovrascrive quello implementato dall'interfaccia Runnable.
-     * Chiama il metodo split().
-     */
-    @Override
-    public void run() {
-        if(startFile.getName().indexOf(".par.zip") == -1)
-            split();
-        else
-            merge();
     }
 
     /**
@@ -196,54 +188,3 @@ public class ZipSplitter extends Splitter implements Runnable {
         }
     }
 }
-
-/*while(true){
-            try {
-                if (!(fis.read(buf) != -1)) break;
-                //trasf -= dimBuf;
-                fos.write(buf);
-                dimPar -= dimBuf;
-                if(/*trasf <= 0 || dimPar <= 0) {
-                    dimPar = 104857600;
-                    fos.close();
-                    fos = new FileOutputStream(file.getName() + "" + (++c) + ".par");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try {
-            fis.close();
-            fos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
-
-                /*while ((length = fis.read(buf, 0, buf.length)) >= 0){
-                if((dimPar-length) >= 0) {
-                    fos.write(buf, 0, length);
-                    dimPar -= length;
-                }
-                else{
-                    int rem = length-dimPar;
-                    fos.write(buf, 0, dimPar);
-                    fos.close();
-                    fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
-                    fos.write(buf, dimPar, rem);
-                    dimPar = DIM_MAX_PAR-rem;         //reimposto la dimensione della partizione
-                }
-            }*/
-
-                /*//leggo dallo stream
-                if (fis.read(buf, 0, buf.length) == -1) break;
-                zos.write(buf);             //scrivo nel file compresso
-                dimPar -= dimBuf;           //tolgo alla dimensione della partizione la dimensione del buffer
-                if(dimPar <= 0){
-                    dimPar = 104857600;       //reimposto la dimensione della partizione
-                    zos.flush();
-                    zos.closeEntry();       //chiudo la entry, svuoto lo stream e lo chiudo
-                    zos.close();
-                    //creo un nuovo stream e creo la prima entry
-                    zos = new ZipOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.zip"));
-                    zos.putNextEntry(new ZipEntry(startFile.getName() + "" + (c) + ".par"));
-                }*/

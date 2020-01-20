@@ -27,10 +27,11 @@ public class BufferedSplitter extends Splitter implements Runnable {
     /**
      * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file.
      * @param path Path del file da cui iniziare.
+     * @param split true se il file è da dividere, false se è da unire.
      * @param dimPar Dimensione di ogni parte.
      */
-    public BufferedSplitter(String path, int dimPar){
-        super(path);
+    public BufferedSplitter(String path, boolean split, int dimPar) {
+        super(path, split);
         this.dimPar = dimPar;
         nParti = -1;
         parti = false;
@@ -39,10 +40,11 @@ public class BufferedSplitter extends Splitter implements Runnable {
     /**
      * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere,
      * @param path Path del file da cui iniziare.
+     * @param split true se il file è da dividere, false se è da unire.
      * @param numPar Numero massimo di file da generare.
      */
-    public BufferedSplitter(String path, long numPar){
-        super(path);
+    public BufferedSplitter(String path, boolean split, long numPar){
+        super(path, split);
         File tmp = new File(path);
         this.nParti = numPar;
         this.dimPar = (int)((tmp.length()/nParti)+(tmp.length()%nParti));
@@ -50,41 +52,44 @@ public class BufferedSplitter extends Splitter implements Runnable {
         parti = true;
     }
 
-
     /**
      * Costruttore dello Splitter.
      * @param path Path del file.
+     * @param split true se il file è da dividere, false se è da unire.
      */
-    public BufferedSplitter(String path){
-        super(path);
+    public BufferedSplitter(String path, boolean split){
+        super(path, split);
     }
 
     /**
      * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file.
      * @param f File da cui iniziare.
+     * @param split true se il file è da dividere, false se è da unire.
      * @param dimPar Dimensione di ogni parte.
      */
-    public BufferedSplitter(File f, int dimPar){
-        super(f);
+    public BufferedSplitter(File f, boolean split, int dimPar){
+        super(f, split);
         this.dimPar = dimPar;
     }
 
     /**
      * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere,
      * @param f File da cui iniziare.
+     * @param split true se il file è da dividere, false se è da unire.
      * @param numPar Numero massimo di file da generare.
      */
-    public BufferedSplitter(File f, long numPar){
-        super(f);
+    public BufferedSplitter(File f, boolean split, long numPar){
+        super(f, split);
         this.dimPar = (int)((f.length()/numPar)+(f.length()%numPar));
     }
 
     /**
      * Costruttore dello Splitter.
      * @param f File di partenza.
+     * @param split true se il file è da dividere, false se è da unire.
      */
-    public BufferedSplitter(File f){
-        super(f);
+    public BufferedSplitter(File f, boolean split){
+        super(f, split);
     }
 
     /**
@@ -93,18 +98,6 @@ public class BufferedSplitter extends Splitter implements Runnable {
      */
     public int getDimPar() {
         return dimPar;
-    }
-
-    /**
-     * Metodo che sovrascrive quello implementato dall'interfaccia Runnable.
-     * Chiama il metodo split().
-     */
-    @Override
-    public void run() {
-        if(startFile.getName().indexOf(".par") == -1)
-            split();
-        else
-            merge();
     }
 
     /**
@@ -230,22 +223,3 @@ public class BufferedSplitter extends Splitter implements Runnable {
         return nParti;
     }
 }
-
-
-
-        /*while(true){
-            try {
-                if (!(fis.read(buf) != -1)) break; //se la lettura è finita esco dal ciclo
-                //trasf -= dimBuf;
-                fos.write(buf);                 //scrittura del buffer letto in precedenza
-                dimPar -= dimBuf;               //tolgo alla dimensione della partizione la dimensione del buffer
-                if(/*trasf <= 0 || dimPar <= 0) {
-                    dimPar = 2097152;         //reimposto la dimensione della partizione
-                    fos.flush();                //svuoto lo stream
-                    fos.close();                //chiudo lo stream e ne creo uno nuovo
-                    fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }*/

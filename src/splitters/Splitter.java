@@ -12,10 +12,36 @@ public abstract class Splitter implements Runnable{
      * Il file da dividere.
      */
     protected File startFile;
+
     /**
      * Progresso nella divisione del file.
      */
     protected double progress = 0;
+
+    /**
+     * Valore booleano per capire che azione c'è da fare, se split o merge.
+     */
+    protected boolean split = true;
+
+    /**
+     * Costruttore per inizializzare il file da dividere.
+     * @param f File da dividere.
+     * @param split true se il file è da dividere, false se è da unire.
+     */
+    public Splitter(File f, boolean split){
+        startFile = f;
+        this.split = split;
+    }
+
+    /**
+     * Costruttore per inizializzare il file da dividere.
+     * @param path Path del file da dividere.
+     * @param split true se il file è da dividere, false se è da unire.
+     */
+    public Splitter(String path, boolean split){
+        startFile = new File(path);
+        this.split = split;
+    }
 
     /**
      * Metodo che ritorna il numero di byte letti finora.
@@ -34,35 +60,11 @@ public abstract class Splitter implements Runnable{
     }
 
     /**
-     * Costruttore per inizializzare il file da dividere.
-     * @param f File da dividere.
-     */
-    public Splitter(File f){
-        startFile = f;
-    }
-
-    /**
-     * Costruttore per inizializzare il file da dividere.
-     * @param path Path del file da dividere.
-     */
-    public Splitter(String path){
-        startFile = new File(path);
-    }
-
-    /**
      * Metodo per ottenere il file da dividere.
      * @return File da dividere.
      */
     public File getStartFile() {
         return startFile;
-    }
-
-    /**
-     * Cambiare il file da dividere
-     * @param startFile Nuovo File da dividere.
-     */
-    public void setStartFile(File startFile) {
-        this.startFile = startFile;
     }
 
     /**
@@ -76,8 +78,14 @@ public abstract class Splitter implements Runnable{
     abstract void merge();
 
     /**
-     * Ogni Splitter dovrà implementarlo per poter implementare l'interfaccia Runnable.
+     * Metodo che sovrascrive quello implementato dall'interfaccia Runnable.
+     * A seconda del valore dell'attributo split verrà eseguita la divisione o l'unione
      */
     @Override
-    public abstract void run();
+    public void run(){
+        if (split)
+            split();
+        else
+            merge();
+    }
 }

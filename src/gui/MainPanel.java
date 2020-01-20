@@ -42,16 +42,16 @@ public class MainPanel extends JPanel {
     private void addElementToVector(File att, SettingsDialog dialog) {
         switch(dialog.getModValue().getSelectedIndex()){
             case 0:
-                v.add(new BufferedSplitter(att, Integer.parseInt(dialog.getDimValue().getText())));
+                v.add(new BufferedSplitter(att, true, Integer.parseInt(dialog.getDimValue().getText())));
                 break;
             case 1:
-                v.add(new CryptoSplitter(att, new String(dialog.getPassValue().getPassword()), Integer.parseInt(dialog.getDimValue().getText())));
+                v.add(new CryptoSplitter(att, true, new String(dialog.getPassValue().getPassword()), Integer.parseInt(dialog.getDimValue().getText())));
                 break;
             case 2:
-                v.add(new ZipSplitter(att, Integer.parseInt(dialog.getDimValue().getText())));
+                v.add(new ZipSplitter(att, true, Integer.parseInt(dialog.getDimValue().getText())));
                 break;
             case 3:
-                v.add(new BufferedSplitter(att, Long.parseLong(dialog.getnPartiValue().getText())));
+                v.add(new BufferedSplitter(att, true, Long.parseLong(dialog.getnPartiValue().getText())));
                 break;
         }
     }
@@ -262,13 +262,13 @@ public class MainPanel extends JPanel {
                     dialog.setLocationRelativeTo(null);
                     dialog.setVisible(true);
 
-                    t = new Thread(new CryptoSplitter(att, new String(dialog.getPassValue().getPassword())));
+                    t = new Thread(new CryptoSplitter(att, false, new String(dialog.getPassValue().getPassword())));
                     break;
                 case ".zip":
-                    t = new Thread(new ZipSplitter(att));
+                    t = new Thread(new ZipSplitter(att, false));
                     break;
                 case ".par":
-                    t = new Thread(new BufferedSplitter(att));
+                    t = new Thread(new BufferedSplitter(att, false));
                     break;
             }
             t.start();

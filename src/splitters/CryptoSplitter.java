@@ -1,5 +1,7 @@
 package splitters;
 
+import com.sun.media.jfxmediaimpl.platform.gstreamer.GSTPlatform;
+
 import static utils.Const.DIM_MAX_BUF;
 import static utils.MyUtils.*;
 
@@ -22,17 +24,57 @@ public class CryptoSplitter extends Splitter implements Runnable {
     private int dimPar;
 
     /**
-     * Ritorna la dimensione di ogni parte dello split.
-     * @return Dimensione, uguale per ogni file.
-     */
-    public int getDimPar() {
-        return dimPar;
-    }
-
-    /**
      * La password con cui si fa la cifratura o decifratura.
      */
     private String pass;
+
+    /**
+     * Costruttore dello Splitter.
+     * @param path Path del file.
+     * @param split true se il file è da dividere, false se è da unire.
+     * @param pass Password con cui verrà gestito il file
+     * @param dimPar Dimensione di ogni parte.
+     */
+    public CryptoSplitter(String path, boolean split, String pass, int dimPar) {
+        super(path, split);
+        this.pass = pass;
+        this.dimPar = dimPar;
+    }
+
+    /**
+     * Costruttore dello Splitter.
+     * @param path Path del file.
+     * @param split true se il file è da dividere, false se è da unire.
+     * @param pass Password con cui verrà gestito il file.
+     */
+    public CryptoSplitter(String path, boolean split, String pass){
+        super(path, split);
+        this.pass = pass;
+    }
+
+    /**
+     * Costruttore dello Splitter.
+     * @param f File da cui iniziare.
+     * @param split true se il file è da dividere, false se è da unire.
+     * @param pass Password con cui verrà gestito il file.
+     * @param dimPar Dimensione di ogni parte.
+     */
+    public CryptoSplitter(File f, boolean split, String pass, int dimPar){
+        super(f, split);
+        this.pass = pass;
+        this.dimPar = dimPar;
+    }
+
+    /**
+     * Costruttore dello Splitter.
+     * @param f File da cui iniziare.
+     * @param split true se il file è da dividere, false se è da unire.
+     * @param pass Password con cui verrà gestito il file.
+     */
+    public CryptoSplitter(File f, boolean split, String pass){
+        super(f, split);
+        this.pass = pass;
+    }
 
     /**
      * Metodo per ottenere la password attuale
@@ -51,59 +93,11 @@ public class CryptoSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Costruttore dello Splitter.
-     * @param path Path del file.
-     * @param pass Password con cui verrà gestito il file
-     * @param dimPar Dimensione di ogni parte.
+     * Ritorna la dimensione di ogni parte dello split.
+     * @return Dimensione, uguale per ogni file.
      */
-    public CryptoSplitter(String path, String pass, int dimPar) {
-        super(path);
-        this.pass = pass;
-        this.dimPar = dimPar;
-    }
-
-    /**
-     * Costruttore dello Splitter.
-     * @param path Path del file.
-     * @param pass Password con cui verrà gestito il file.
-     */
-    public CryptoSplitter(String path, String pass){
-        super(path);
-        this.pass = pass;
-    }
-
-    /**
-     * Costruttore dello Splitter.
-     * @param f File da cui iniziare.
-     * @param pass Password con cui verrà gestito il file.
-     * @param dimPar Dimensione di ogni parte.
-     */
-    public CryptoSplitter(File f, String pass, int dimPar){
-        super(f);
-        this.pass = pass;
-        this.dimPar = dimPar;
-    }
-
-    /**
-     * Costruttore dello Splitter.
-     * @param f File da cui iniziare.
-     * @param pass Password con cui verrà gestito il file.
-     */
-    public CryptoSplitter(File f, String pass){
-        super(f);
-        this.pass = pass;
-    }
-
-    /**
-     * Metodo che sovrascrive quello implementato dall'interfaccia Runnable.
-     * Chiama il metodo split().
-     */
-    @Override
-    public void run() {
-        if(startFile.getName().indexOf(".par.crypto") == -1)
-            split();
-        else
-            merge();
+    public int getDimPar() {
+        return dimPar;
     }
 
     /**
@@ -265,69 +259,3 @@ public class CryptoSplitter extends Splitter implements Runnable {
         }
     }
 }
-
-                /*
-                else{
-                    int rem = length-dimPar;
-                    fos.write(buf, 0, dimPar);
-                    fos.close();
-                    fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
-                    fos.write(buf, dimPar, rem);
-                    dimPar = DIM_MAX_PAR-rem;         //reimposto la dimensione della partizione
-                }
-            }*/
-
-                /*if (!(fis.read(buf) != -1)) break;          //leggo dallo stream in chiaro
-                //trasf -= dimBuf;
-                cos.write(buf);                     //scrivo il buffer con lo stream cifrato
-                dimPar -= dimBuf;                   //sottraggo alla dimensione della partizione quella del buffer
-                if(/*trasf <= 0 || dimPar <= 0) { //quando la partizione è piena
-                    dimPar = 104857600;             //reimposto la dimensione
-                    cos.flush();                    //svuoto e chiudo lo stream
-                    cos.close();
-                    //creo un nuovo stream per una nuova partizione
-                    cos = new CipherOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.crypto"), cipher);
-                }*/
-/*Thread splitter = new Thread(split);
-        splitter.start();
-        try {
-            splitter.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        File attuale = new File(file.getName()+"1.par");
-        int c = 1;
-
-        while(attuale.exists()){
-            KeyGenerator keygen = null;
-            try {
-                keygen = KeyGenerator.getInstance("AES");
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
-            keygen.init(128);
-
-            Key key = keygen.generateKey();
-
-            Cipher cipher = null;
-            try {
-                cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-                cipher.init(Cipher.ENCRYPT_MODE, key);
-                cipher.doFinal(Files.readAllBytes(attuale.toPath()));
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
-                e.printStackTrace();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (BadPaddingException e) {
-                e.printStackTrace();
-            } catch (IllegalBlockSizeException e) {
-                e.printStackTrace();
-            }
-            attuale.renameTo(new File(attuale.getName()+".crypto"));
-            attuale = new File(attuale.getName().substring(0, attuale.getName().lastIndexOf(".par")-1)+(++c)+".par");
-        }*/
