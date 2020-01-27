@@ -63,6 +63,17 @@ public class SettingsDialog extends JDialog {
     private JLabel fileName;
 
     /**
+     * Label che rappresenta dove andrà il file diviso.
+     */
+    private JLabel dirLabel;
+
+    /**
+     * Bottone che permette di aprire un JFileChooser per scegliere la directory.
+     */
+    private JButton dirValue;
+
+
+    /**
      * Classe interna che implementa il listener per animare i campi del dialog a seconda della selezione della JComboBox.
      */
     private class ComboSelectionListener implements ActionListener{
@@ -104,6 +115,18 @@ public class SettingsDialog extends JDialog {
         }
     }
 
+    private class NavigaButtonListener implements ActionListener{
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            JFileChooser dirChooser = new JFileChooser();
+            dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+            dirChooser.showDialog(getParent(), "Apri");
+
+            dirLabel.setText(dirChooser.getSelectedFile().getAbsolutePath());
+        }
+    }
+
     /**
      * Metodo privato per creare delle istanze di ogni componente del Dialog.
      */
@@ -138,6 +161,10 @@ public class SettingsDialog extends JDialog {
         passLabel = new JLabel("Password");
         nPartiLabel = new JLabel("N. Parti");
         fileName = new JLabel();
+
+        dirLabel = new JLabel("Directory");
+        dirValue = new JButton("Naviga");
+        dirValue.addActionListener(new NavigaButtonListener());
     }
 
     /**
@@ -157,6 +184,7 @@ public class SettingsDialog extends JDialog {
                                 .addComponent(dimLabel)
                                 .addComponent(passLabel)
                                 .addComponent(nPartiLabel)
+                                .addComponent(dirLabel)
                                 .addComponent(buttonOK)
                 )
                 .addGroup(
@@ -166,6 +194,7 @@ public class SettingsDialog extends JDialog {
                                 .addComponent(dimValue)
                                 .addComponent(passValue)
                                 .addComponent(nPartiValue)
+                                .addComponent(dirValue)
                                 .addComponent(buttonCancel)
                 )
         );
@@ -192,6 +221,11 @@ public class SettingsDialog extends JDialog {
                         groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
                             .addComponent(nPartiLabel)
                             .addComponent(nPartiValue)
+                )
+                .addGroup(
+                        groupLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                            .addComponent(dirLabel)
+                            .addComponent(dirValue)
                 )
                 .addGroup(
                         groupLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
@@ -255,6 +289,7 @@ public class SettingsDialog extends JDialog {
         nPartiValue.setEnabled(false);
 
         fileName.setText(att.getPath());
+        dirLabel.setText(att.getParent());
     }
 
     /**
@@ -267,7 +302,7 @@ public class SettingsDialog extends JDialog {
         passLabel.setEnabled(false);
         passValue.setEnabled(false);
 
-        if(tmp.isParti()){
+        if(!tmp.isParti()){
             dimLabel.setEnabled(false);
             dimValue.setEnabled(false);
             nPartiLabel.setEnabled(true);
@@ -287,6 +322,7 @@ public class SettingsDialog extends JDialog {
 
             modValue.setSelectedIndex(0);
         }
+        dirLabel.setText(tmp.getFinalDirectory());
     }
 
     /**
@@ -304,6 +340,8 @@ public class SettingsDialog extends JDialog {
         dimValue.setText(String.valueOf(c.getDimPar()));
 
         modValue.setSelectedIndex(1);
+
+        dirLabel.setText(c.getFinalDirectory());
     }
 
     /**
@@ -321,6 +359,8 @@ public class SettingsDialog extends JDialog {
         dimValue.setText(String.valueOf(z.getDimPar()));
 
         modValue.setSelectedIndex(2);
+
+        dirLabel.setText(z.getFinalDirectory());
     }
 
     /**
@@ -367,5 +407,13 @@ public class SettingsDialog extends JDialog {
      */
     public JTextField getnPartiValue() {
         return nPartiValue;
+    }
+
+    /**
+     * Metodo per ottenere la directory dove andrà il file diviso, contenuta nel testo della JLabel.
+     * @return JLabel contenente la directory dove andrà il file diviso.
+     */
+    public JLabel getDirLabel() {
+        return dirLabel;
     }
 }

@@ -18,43 +18,25 @@ public class ZipSplitter extends Splitter implements Runnable {
     private int dimPar;
 
     /**
-     * Costruttore dello Splitter.
+     * Costruttore dello Splitter. Chiamato in fase di divisione.
      * @param f File da dividere.
      * @param split true se il file è da dividere, false se è da unire.
      * @param dimPar Dimensione di ogni parte.
+     * @param dir Directory dove andranno le parti del file diviso.
      */
-    public ZipSplitter(File f, boolean split, int dimPar){
-        super(f, split);
+    public ZipSplitter(File f, boolean split, int dimPar, String dir){
+        super(f, split, "");
         this.dimPar = dimPar;
+        this.finalDirectory = dir;
     }
 
     /**
-     * Costruttore dello Splitter.
-     * @param path Path del file da dividere.
-     * @param split true se il file è da dividere, false se è da unire.
-     * @param dimPar Dimensione di ogni parte.
-     */
-    public ZipSplitter(String path, boolean split, int dimPar){
-        super(path, split);
-        this.dimPar = dimPar;
-    }
-
-    /**
-     * Costruttore dello Splitter.
+     * Costruttore dello Splitter. Chiamato in fase di unione.
      * @param f File da dividere.
      * @param split true se il file è da dividere, false se è da unire.
      */
     public ZipSplitter(File f, boolean split) {
-        super(f, split);
-    }
-
-    /**
-     * Costruttore dello Splitter.
-     * @param path Path del file da dividere.
-     * @param split true se il file è da dividere, false se è da unire.
-     */
-    public ZipSplitter(String path, boolean split){
-        super(path, split);
+        super(f, split, "");
     }
 
     /**
@@ -83,7 +65,7 @@ public class ZipSplitter extends Splitter implements Runnable {
 
         try{
             fis = new FileInputStream(startFile);       //creo gli stream
-            zos = new ZipOutputStream(new FileOutputStream(outputFile+".zip"));
+            zos = new ZipOutputStream(new FileOutputStream(finalDirectory+File.separator+outputFile+".zip"));
 
             zos.putNextEntry(new ZipEntry(outputFile));     //inserisco la prima entry nel primo file
         } catch (IOException e) {
@@ -105,7 +87,7 @@ public class ZipSplitter extends Splitter implements Runnable {
                     progress += dimPar;
                     zos.closeEntry();               //chiudo la entry attuale visto che è finita
                     zos.close();
-                    zos = new ZipOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.zip"));
+                    zos = new ZipOutputStream(new FileOutputStream(finalDirectory+File.separator+startFile.getName() + "" + (++c) + ".par.zip"));
                     //apro una nuova entry
                     zos.putNextEntry(new ZipEntry(startFile.getName() + "" + (c) + ".par"));
                     zos.write(buf, dimPar, rem);
@@ -133,7 +115,12 @@ public class ZipSplitter extends Splitter implements Runnable {
      */
     public void merge(){
         //nome del file originale per cercare le parti successive
-        String nomeFile = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par") - 1);
+        String nomeFile = null;
+        try {
+            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(".par") - 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         //nome del file ricostruito
         String nomeFileFinale = nomeFile + "fine";
@@ -149,7 +136,7 @@ public class ZipSplitter extends Splitter implements Runnable {
 
         try {
             //apro gli stream di lettura di zip e scrittura del file finale
-            zis = new ZipInputStream(new FileInputStream(startFile.getName()));
+            zis = new ZipInputStream(new FileInputStream(startFile.getCanonicalPath()));
 
             if (!out.exists())
                 out.createNewFile();

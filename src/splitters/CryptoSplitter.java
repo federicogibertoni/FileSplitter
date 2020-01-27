@@ -29,50 +29,27 @@ public class CryptoSplitter extends Splitter implements Runnable {
     private String pass;
 
     /**
-     * Costruttore dello Splitter.
-     * @param path Path del file.
-     * @param split true se il file è da dividere, false se è da unire.
-     * @param pass Password con cui verrà gestito il file
-     * @param dimPar Dimensione di ogni parte.
-     */
-    public CryptoSplitter(String path, boolean split, String pass, int dimPar) {
-        super(path, split);
-        this.pass = pass;
-        this.dimPar = dimPar;
-    }
-
-    /**
-     * Costruttore dello Splitter.
-     * @param path Path del file.
-     * @param split true se il file è da dividere, false se è da unire.
-     * @param pass Password con cui verrà gestito il file.
-     */
-    public CryptoSplitter(String path, boolean split, String pass){
-        super(path, split);
-        this.pass = pass;
-    }
-
-    /**
-     * Costruttore dello Splitter.
+     * Costruttore dello Splitter. Chiamato in fase di divisione.
      * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param pass Password con cui verrà gestito il file.
      * @param dimPar Dimensione di ogni parte.
+     * @param dir Directory dove andranno le parti del file diviso.
      */
-    public CryptoSplitter(File f, boolean split, String pass, int dimPar){
-        super(f, split);
+    public CryptoSplitter(File f, boolean split, String pass, int dimPar, String dir){
+        super(f, split, dir);
         this.pass = pass;
         this.dimPar = dimPar;
     }
 
     /**
-     * Costruttore dello Splitter.
+     * Costruttore dello Splitter. Chiamato in fase di unione.
      * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param pass Password con cui verrà gestito il file.
      */
     public CryptoSplitter(File f, boolean split, String pass){
-        super(f, split);
+        super(f, split, "");
         this.pass = pass;
     }
 
@@ -133,7 +110,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         }
         try {
             fis = new FileInputStream(startFile);                //apro gli stream in modalità "in chiaro"
-            fos = new FileOutputStream(startFile.getName()+""+"1.par.crypto");
+            fos = new FileOutputStream(finalDirectory+File.separator+startFile.getName()+""+"1.par.crypto");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -162,7 +139,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
                     cos.write(buf, 0, dimPar);
                     progress += dimPar;
                     cos.close();
-                    cos = new CipherOutputStream(new FileOutputStream(startFile.getName() + "" + (++c) + ".par.crypto"), cipher);
+                    cos = new CipherOutputStream(new FileOutputStream(finalDirectory+File.separator+startFile.getName() + "" + (++c) + ".par.crypto"), cipher);
                     cos.write(buf, dimPar, rem);
                     dimPar = dimParTmp - rem;
 
@@ -216,7 +193,12 @@ public class CryptoSplitter extends Splitter implements Runnable {
         }
 
         //nome del file originale
-        String nomeFile = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1);
+        String nomeFile = null;
+        try {
+            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(".par")-1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         int dimBuf = DIM_MAX_BUF, c = 1;
         byte[] buf = new byte[dimBuf];
 
@@ -225,7 +207,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         try {
             //apro gli stream
             cis = new CipherInputStream(fis, cipher);
-            fos = new FileOutputStream(new File(startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1) + "fine"));
+            fos = new FileOutputStream(new File(nomeFile + "fine"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

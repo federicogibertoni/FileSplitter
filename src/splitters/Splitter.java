@@ -24,13 +24,19 @@ public abstract class Splitter implements Runnable{
     protected boolean split = true;
 
     /**
+     * Directory in cui andranno le parti del file diviso.
+     */
+    protected String finalDirectory = "";
+
+    /**
      * Costruttore per inizializzare il file da dividere.
      * @param f File da dividere.
      * @param split true se il file è da dividere, false se è da unire.
      */
-    public Splitter(File f, boolean split){
+    public Splitter(File f, boolean split, String dir){
         startFile = f;
         this.split = split;
+        this.finalDirectory = dir;
     }
 
     /**
@@ -65,6 +71,21 @@ public abstract class Splitter implements Runnable{
      */
     public File getStartFile() {
         return startFile;
+    }
+
+    /**
+     * Metodo per ottenere la directory dove andrà il file diviso.
+     * @return Directory di dove saranno le parti finali.
+     */
+    public String getFinalDirectory() {
+        return finalDirectory;
+    }
+
+    /**
+     * Metodo per impostare la directory dove andrà il file diviso.
+     */
+    public void setFinalDirectory(String finalDirectory) {
+        this.finalDirectory = finalDirectory;
     }
 
     /**

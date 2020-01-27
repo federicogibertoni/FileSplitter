@@ -42,16 +42,16 @@ public class MainPanel extends JPanel {
     private void addElementToVector(File att, SettingsDialog dialog) {
         switch(dialog.getModValue().getSelectedIndex()){
             case 0:
-                v.add(new BufferedSplitter(att, true, Integer.parseInt(dialog.getDimValue().getText())));
+                v.add(new BufferedSplitter(att, true, Integer.parseInt(dialog.getDimValue().getText()), dialog.getDirLabel().getText()));
                 break;
             case 1:
-                v.add(new CryptoSplitter(att, true, new String(dialog.getPassValue().getPassword()), Integer.parseInt(dialog.getDimValue().getText())));
+                v.add(new CryptoSplitter(att, true, new String(dialog.getPassValue().getPassword()), Integer.parseInt(dialog.getDimValue().getText()), dialog.getDirLabel().getText()));
                 break;
             case 2:
-                v.add(new ZipSplitter(att, true, Integer.parseInt(dialog.getDimValue().getText())));
+                v.add(new ZipSplitter(att, true, Integer.parseInt(dialog.getDimValue().getText()), dialog.getDirLabel().getText()));
                 break;
             case 3:
-                v.add(new BufferedSplitter(att, true, Long.parseLong(dialog.getnPartiValue().getText())));
+                v.add(new BufferedSplitter(att, true, Long.parseLong(dialog.getnPartiValue().getText()), dialog.getDirLabel().getText()));
                 break;
         }
     }

@@ -25,71 +25,39 @@ public class BufferedSplitter extends Splitter implements Runnable {
     private boolean parti;
 
     /**
-     * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file.
-     * @param path Path del file da cui iniziare.
+     * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file. Chiamato in fase di divisone alla chiusura del SettingsDialog.
+     * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param dimPar Dimensione di ogni parte.
+     * @param dir Directory dove andranno le parti del file diviso.
      */
-    public BufferedSplitter(String path, boolean split, int dimPar) {
-        super(path, split);
+    public BufferedSplitter(File f, boolean split, int dimPar, String dir) {
+        super(f, split, dir);
         this.dimPar = dimPar;
-        nParti = -1;
-        parti = false;
+        this.parti = true;
     }
 
     /**
-     * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere,
-     * @param path Path del file da cui iniziare.
+     * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere. Chiamato in fase di divisone alla chiusura del SettingsDialog.
+     * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param numPar Numero massimo di file da generare.
+     * @param dir Directory dove andranno le parti del file diviso.
      */
-    public BufferedSplitter(String path, boolean split, long numPar){
-        super(path, split);
-        File tmp = new File(path);
+    public BufferedSplitter(File f, boolean split, long numPar, String dir){
+        super(f, split, dir);
         this.nParti = numPar;
-        this.dimPar = (int)((tmp.length()/nParti)+(tmp.length()%nParti));
-
-        parti = true;
-    }
-
-    /**
-     * Costruttore dello Splitter.
-     * @param path Path del file.
-     * @param split true se il file è da dividere, false se è da unire.
-     */
-    public BufferedSplitter(String path, boolean split){
-        super(path, split);
-    }
-
-    /**
-     * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file.
-     * @param f File da cui iniziare.
-     * @param split true se il file è da dividere, false se è da unire.
-     * @param dimPar Dimensione di ogni parte.
-     */
-    public BufferedSplitter(File f, boolean split, int dimPar){
-        super(f, split);
-        this.dimPar = dimPar;
-    }
-
-    /**
-     * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere,
-     * @param f File da cui iniziare.
-     * @param split true se il file è da dividere, false se è da unire.
-     * @param numPar Numero massimo di file da generare.
-     */
-    public BufferedSplitter(File f, boolean split, long numPar){
-        super(f, split);
         this.dimPar = (int)((f.length()/numPar)+(f.length()%numPar));
+        this.parti = false;
     }
 
     /**
-     * Costruttore dello Splitter.
+     * Costruttore dello Splitter, chiamato in fase di unione delle parti.
      * @param f File di partenza.
      * @param split true se il file è da dividere, false se è da unire.
      */
     public BufferedSplitter(File f, boolean split){
-        super(f, split);
+        super(f, split, "");
     }
 
     /**
@@ -98,6 +66,22 @@ public class BufferedSplitter extends Splitter implements Runnable {
      */
     public int getDimPar() {
         return dimPar;
+    }
+
+    /**
+     * Metodo per capire se un file è del tipo di divisione in parti uguali o dimensioni massime.
+     * @return true se il file è da dividere il n parti uguali, false altrimenti.
+     */
+    public boolean isParti() {
+        return parti;
+    }
+
+    /**
+     * Metodo per ottenre il numero di parti in cui dividere il file.
+     * @return Numero di parti in cui il file va diviso.
+     */
+    public long getnParti() {
+        return nParti;
     }
 
     /**
@@ -110,7 +94,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
         FileOutputStream fos = null;
         try {
             fis = new FileInputStream(startFile);                //creo gli stream di lettura e scrittura
-            fos = new FileOutputStream(startFile.getName()+""+"1.par");
+            fos = new FileOutputStream(finalDirectory+File.separator+startFile.getName()+""+"1.par");
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -132,7 +116,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
                     fos.write(buf, 0, dimPar);
                     progress += dimPar;
                     fos.close();
-                    fos = new FileOutputStream(startFile.getName() + "" + (++c) + ".par");
+                    fos = new FileOutputStream(finalDirectory+File.separator+startFile.getName() + "" + (++c) + ".par");
                     fos.write(buf, dimPar, rem);
                     dimPar = dimParTmp-rem;         //reimposto la dimensione della partizione tenendo conto di quello che ho già scritto
 
@@ -156,9 +140,15 @@ public class BufferedSplitter extends Splitter implements Runnable {
      */
     public void merge() {
         //nome del file originale
-        String nomeFile = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1);
+        String nomeFile = null;
+        try {
+            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(".par")-1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         //nome del file ricostruito
-        String nomeFileFinale = startFile.getName().substring(0, startFile.getName().lastIndexOf(".par")-1) + "fine";
+        String nomeFileFinale = nomeFile + "fine";
 
         int c = 1, dimBuf = DIM_MAX_BUF;
         byte[] buf = new byte[dimBuf];
@@ -205,21 +195,5 @@ public class BufferedSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Metodo per capire se un file è del tipo di divisione in parti uguali o dimensioni massime.
-     * @return true se il file è da dividere il n parti uguali, false altrimenti.
-     */
-    public boolean isParti() {
-        return parti;
-    }
-
-    /**
-     * Metodo per ottenre il numero di parti in cui dividere il file.
-     * @return Numero di parti in cui il file va diviso.
-     */
-    public long getnParti() {
-        return nParti;
     }
 }
