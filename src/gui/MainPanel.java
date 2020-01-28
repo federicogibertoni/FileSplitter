@@ -1,7 +1,5 @@
 package gui;
 
-import static utils.Const.PROGRESS_BAR_COLUMN;
-
 import splitters.BufferedSplitter;
 import splitters.CryptoSplitter;
 import splitters.Splitter;
@@ -18,6 +16,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.ExecutionException;
+
+import static utils.Const.*;
 
 /**
  * Classe che implementa il pannello principale della grafica.
@@ -131,16 +131,22 @@ public class MainPanel extends JPanel {
         switch (dialog.getModValue().getSelectedIndex()){
             case 0: //se è la divisione "classica"
             case 2: //se è la divisione con compressione
-                if(dialog.getDimValue().getText().length() == 0)
+                if(dialog.getDimValue().getText().length() == 0) {
+                    JOptionPane.showMessageDialog(this, FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
                     return false;
+                }
                 break;
             case 1: //se è la divisione con cifratura
-                if(dialog.getDimValue().getText().length() == 0 || dialog.getPassValue().getPassword().length == 0)
+                if(dialog.getDimValue().getText().length() == 0 || dialog.getPassValue().getPassword().length == 0) {
+                    JOptionPane.showMessageDialog(this, FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
                     return false;
+                }
                 break;
             case 3: //se è la divisione con numero di parti
-                if(dialog.getnPartiValue().getText().length() == 0)
+                if(dialog.getnPartiValue().getText().length() == 0) {
+                    JOptionPane.showMessageDialog(this, FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
                     return false;
+                }
                 break;
         }
 
@@ -207,7 +213,7 @@ public class MainPanel extends JPanel {
 
         /**
          * Metodo invocato alla fine di doInBackground(). Si occupa di capire se lo StartWorker
-         * appena terminato era l'ultimo e nel caso riabilita i bottoni della ui.
+         * appena terminato era l'ultimo e nel caso riabilita i bottoni della gui.
          */
         @Override
         protected void done(){
@@ -314,7 +320,7 @@ public class MainPanel extends JPanel {
                         sd = new SettingsDialog((ZipSplitter) tmp);
                     }
 
-                    //creo il Dialog
+                    //creo il JDialog
                     sd.pack();
                     sd.setLocation(0, 0);
                     sd.setLocationRelativeTo(null);
@@ -361,9 +367,11 @@ public class MainPanel extends JPanel {
                     dialog.setLocationRelativeTo(null);
                     dialog.setVisible(true);
 
-                    //controlla che il campo password sia completato
+                    //controllo che il campo password sia stato inserito
                     if(dialog.getPassValue().getPassword().length != 0)
                         t = new Thread(new CryptoSplitter(att, false, new String(dialog.getPassValue().getPassword())));
+                    else
+                        JOptionPane.showMessageDialog(getParent(), FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
                     break;
                 case ".zip":
                     t = new Thread(new ZipSplitter(att, false));
