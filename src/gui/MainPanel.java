@@ -291,7 +291,9 @@ public class MainPanel extends JPanel {
                     dialog.setLocationRelativeTo(null);
                     dialog.setVisible(true);
 
-                    t = new Thread(new CryptoSplitter(att, false, new String(dialog.getPassValue().getPassword())));
+                    //controlla che il campo password sia completato
+                    if(dialog.getPassValue().getPassword().length != 0)
+                        t = new Thread(new CryptoSplitter(att, false, new String(dialog.getPassValue().getPassword())));
                     break;
                 case ".zip":
                     t = new Thread(new ZipSplitter(att, false));
@@ -300,7 +302,8 @@ public class MainPanel extends JPanel {
                     t = new Thread(new BufferedSplitter(att, false));
                     break;
             }
-            t.start();
+            if(t != null)
+                t.start();
         }
     }
 

@@ -1,7 +1,5 @@
 package splitters;
 
-import com.sun.media.jfxmediaimpl.platform.gstreamer.GSTPlatform;
-
 import static utils.Const.DIM_MAX_BUF;
 import static utils.MyUtils.*;
 

@@ -7,6 +7,7 @@ import splitters.ZipSplitter;
 import javax.swing.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Classe che implementa il Dialog che viene aperto quando si aggiunge un nuovo file alla coda oppure se si vogliono modificare le impostazioni.
@@ -128,7 +129,11 @@ public class SettingsDialog extends JDialog {
             dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
             dirChooser.showDialog(getParent(), "Apri");
 
-            dirLabel.setText(dirChooser.getSelectedFile().getAbsolutePath());
+            try {
+                dirLabel.setText(dirChooser.getSelectedFile().getCanonicalPath());
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
         }
     }
 
