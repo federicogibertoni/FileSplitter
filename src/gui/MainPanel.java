@@ -243,11 +243,13 @@ public class MainPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             //disabilito i bottoni durante la divisione
-            startQueueButton.setEnabled(false);
-            addSplitButton.setEnabled(false);
-            addMergeButton.setEnabled(false);
-            editButton.setEnabled(false);
-            deleteButton.setEnabled(false);
+            if(v.size() != 0) {
+                startQueueButton.setEnabled(false);
+                addSplitButton.setEnabled(false);
+                addMergeButton.setEnabled(false);
+                editButton.setEnabled(false);
+                deleteButton.setEnabled(false);
+            }
 
             //creo un vettore di elementi tutti inizializzati a falso e li travaso in un Vector
             //così diventa Thread Safe.
