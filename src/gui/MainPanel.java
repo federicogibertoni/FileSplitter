@@ -1,5 +1,7 @@
 package gui;
 
+import static utils.Const.PROGRESS_BAR_COLUMN;
+
 import splitters.BufferedSplitter;
 import splitters.CryptoSplitter;
 import splitters.Splitter;
@@ -79,12 +81,37 @@ public class MainPanel extends JPanel {
                 dialog.setLocation(0, 0);
                 dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
-
-                addElementToVector(att, dialog);
+                if(validateFields(dialog))
+                    addElementToVector(att, dialog);
             }
 
             data.fireTableDataChanged();
         }
+    }
+
+    /**
+     * Metodo privato per controllare che i campi richiesti dal JDialog siano tutti riempiti alla sua chiusura.
+     * @param dialog Il JDialog da controllare.
+     * @return true se i campi sono tutti completati, false altrimenti.
+     */
+    private boolean validateFields(SettingsDialog dialog) {
+        switch (dialog.getModValue().getSelectedIndex()){
+            case 0: //se è la divisione "classica"
+            case 2: //se è la divisione con compressione
+                if(dialog.getDimValue().getText().length() == 0)
+                    return false;
+                break;
+            case 1: //se è la divisione con cifratura
+                if(dialog.getDimValue().getText().length() == 0 || dialog.getPassValue().getPassword().length == 0)
+                    return false;
+                break;
+            case 3: //se è la divisione con numero di parti
+                if(dialog.getnPartiValue().getText().length() == 0)
+                    return false;
+                break;
+        }
+
+        return true;
     }
 
     /*
@@ -225,8 +252,10 @@ public class MainPanel extends JPanel {
 
                     //rimuovo il file vecchio e lo rimetto aggiornato nella tabella
                     File attuale = tmp.getStartFile();
-                    v.remove(a[i]);
-                    addElementToVector(attuale, sd);
+                    if(validateFields(sd)){
+                        v.remove(a[i]);
+                        addElementToVector(attuale, sd);
+                    }
                 }
 
                 data.fireTableDataChanged();
@@ -314,7 +343,7 @@ public class MainPanel extends JPanel {
         tab = new JTable(data);
         tab.setSize(800, 500);
 
-        tab.getColumn("Progresso").setCellRenderer(new ProgressCellRender());
+        tab.getColumn(data.getColumnName(PROGRESS_BAR_COLUMN)).setCellRenderer(new ProgressCellRender());
 
         add(tab);
         add(new JScrollPane(tab));

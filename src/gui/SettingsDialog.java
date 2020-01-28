@@ -5,7 +5,6 @@ import splitters.CryptoSplitter;
 import splitters.ZipSplitter;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 
@@ -72,7 +71,6 @@ public class SettingsDialog extends JDialog {
      */
     private JButton dirValue;
 
-
     /**
      * Classe interna che implementa il listener per animare i campi del dialog a seconda della selezione della JComboBox.
      */
@@ -115,8 +113,15 @@ public class SettingsDialog extends JDialog {
         }
     }
 
+    /**
+     * Listener per il bottone che fa scegliere dove andare a dividere i file.
+     */
     private class NavigaButtonListener implements ActionListener{
 
+        /**
+         * Una volta premuto il bottone viene aperto un JFileChooser per poter scegliere la cartella di destinazione.
+         * @param e Evento generato dal click sul bottone.
+         */
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser dirChooser = new JFileChooser();
