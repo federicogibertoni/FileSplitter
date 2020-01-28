@@ -154,6 +154,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        finished = true;
     }
 
     /**
@@ -237,5 +238,6 @@ public class CryptoSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        finished = true;
     }
 }

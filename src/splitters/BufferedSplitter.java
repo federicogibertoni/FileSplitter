@@ -133,6 +133,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        finished = true;
     }
 
     /**
@@ -195,5 +196,6 @@ public class BufferedSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        finished = true;
     }
 }

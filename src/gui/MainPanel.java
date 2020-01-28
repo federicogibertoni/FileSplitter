@@ -13,14 +13,42 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Classe che implementa il pannello principale della grafica.
  * Qui sono contenuti la tabella, il suo modello e i bottoni per le funzionalità.
  */
 public class MainPanel extends JPanel {
+    /**
+     * JButton che rappresenta il bottone per avviare la divisione dei files in coda di divisone.
+     */
+    private JButton startQueueButton;
+
+    /**
+     * JButton che rappresenta il bottone per aggiungere un nuovo file alla coda di divisione.
+     */
+    private JButton addSplitButton;
+
+    /**
+     * JButton che rappresenta il bottone per selezionare un file da unire.
+     */
+    private JButton addMergeButton;
+
+    /**
+     * JButton che rappresenta il bottone per modificare i files che sono nella coda di divisione.
+     */
+    private JButton editButton;
+
+    /**
+     * JButton che rappresenta il bottone per cancellare i files dalla coda di divisione.
+     */
+    private JButton deleteButton;
+
     /**
      * Modello su cui si basa la tabella.
      */
@@ -30,6 +58,11 @@ public class MainPanel extends JPanel {
      * Vettore che contiene tutte le righe della tabella.
      */
     private Vector<Splitter> v = new Vector<>();
+
+    /**
+     * Vettore usato dagli SwingWorker per capire qual è l'ultimo e riabilitare i bottoni.
+     */
+    private Vector<Boolean> completed;
 
     /**
      * Implementazione della tabella che rappresenta la coda di divisione dei file.
@@ -144,17 +177,15 @@ public class MainPanel extends JPanel {
          * Metodo che esegue i calcoli del componente su un thread parallelo e nel frattempo invia i risultati parziali al metodo process() tramite publish().
          * Usato per far partire le divisioni dei file nella coda e seguire il loro andamento.
          * @return Ritorna il valore sullo stato dell'esecuzione del thread parallelo, se è finito o meno.
-         * @throws Exception
          */
         @Override
-        protected Boolean doInBackground() throws Exception {
+        protected Boolean doInBackground() {
             setProgress(0);
 
             Thread t = new Thread(v.elementAt(index));
             t.start();
 
             while(t.getState() != Thread.State.TERMINATED){
-                //Thread.sleep(100);
                 double progress = (v.elementAt(index).getProgress() / v.elementAt(index).getStartFile().length() * 100f);
                 setProgress((int)progress);
                 publish((int)progress);
@@ -173,10 +204,28 @@ public class MainPanel extends JPanel {
         protected void process(List<Integer> chunks){
             data.updateStatus(index, chunks.get(0));
         }
+
+        /**
+         * Metodo invocato alla fine di doInBackground(). Si occupa di capire se lo StartWorker
+         * appena terminato era l'ultimo e nel caso riabilita i bottoni della ui.
+         */
+        @Override
+        protected void done(){
+            //dico che un altro SwingWorker è stato completato
+            completed.add(true);
+
+            //se il numero di completati è pari alla lunghezza della coda allora riabilito i bottoni
+            if(completed.size() == v.size()) {
+                startQueueButton.setEnabled(true);
+                addSplitButton.setEnabled(true);
+                addMergeButton.setEnabled(true);
+                editButton.setEnabled(true);
+                deleteButton.setEnabled(true);
+            }
+        }
     }
 
     /**
-     *
      * Listener che viene agganciato al bottone per avviare il processo di split/merge.
      */
     private class StartActionListener implements ActionListener {
@@ -187,12 +236,33 @@ public class MainPanel extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
+            //disabilito i bottoni durante la divisione
+            startQueueButton.setEnabled(false);
+            addSplitButton.setEnabled(false);
+            addMergeButton.setEnabled(false);
+            editButton.setEnabled(false);
+            deleteButton.setEnabled(false);
+
+            //creo un vettore di elementi tutti inizializzati a falso e li travaso in un Vector
+            //così diventa Thread Safe.
+//            Boolean[] status = new Boolean[v.size()];
+//            Arrays.fill(status, false);
+            completed = new Vector<>(0);
+
             for(Splitter sp : v){
                 if(sp.getProgress() == 0)
                     new StartWorker(v.indexOf(sp)).execute();
             }
-            //v.removeAllElements();
-            //data.fireTableDataChanged();
+
+            //controllo che tutta la coda abbia finito prima di riabilitare i bottoni
+            /*boolean finished = false;
+            while(!finished) {
+                finished = true;
+                for (Splitter sp : v){
+                    if(!sp.isFinished())
+                        finished = sp.isFinished();
+                }
+            }*/
         }
     }
 
@@ -352,31 +422,31 @@ public class MainPanel extends JPanel {
         add(new JScrollPane(tab));
 
         //bottone per l'avvio dei processi
-        JButton startQueueButton = new JButton("Avvio");
+        startQueueButton = new JButton("Avvio");
         startQueueButton.addActionListener(new StartActionListener());
         startQueueButton.setActionCommand("avvio");
         add(startQueueButton);
 
         //bottone per aggiungere un file da dividere
-        JButton addSplitButton = new JButton("Dividi");
+        addSplitButton = new JButton("Dividi");
         addSplitButton.addActionListener(new AggiuntaActionListener());
         addSplitButton.setActionCommand("divisione");
         add(addSplitButton);
 
         //bottone per aggiungere un file da unire
-        JButton addMergeButton = new JButton("Unisci");
+        addMergeButton = new JButton("Unisci");
         addMergeButton.addActionListener(new UnioneActionListener());
         addMergeButton.setActionCommand("unione");
         add(addMergeButton);
 
         //bottone per modificare un file nella tabella
-        JButton editButton = new JButton("Modifica");
+        editButton = new JButton("Modifica");
         editButton.addActionListener(new ModificaActionListener());
         editButton.setActionCommand("modifica");
         add(editButton);
 
         //bottone per eliminare un file dalla tabella
-        JButton deleteButton = new JButton("Elimina");
+        deleteButton = new JButton("Elimina");
         deleteButton.addActionListener(new EliminaActionListener());
         deleteButton.setActionCommand("elimina");
         add(deleteButton);

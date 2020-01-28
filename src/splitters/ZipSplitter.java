@@ -107,7 +107,7 @@ public class ZipSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
+        finished = true;
     }
 
     /**
@@ -173,5 +173,6 @@ public class ZipSplitter extends Splitter implements Runnable {
         } catch(IOException e){
             e.printStackTrace();
         }
+        finished = true;
     }
 }

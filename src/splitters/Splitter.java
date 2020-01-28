@@ -19,6 +19,11 @@ public abstract class Splitter implements Runnable{
     protected double progress = 0;
 
     /**
+     * Attributo per controllare se la divisione di un file è finita o meno.
+     */
+    protected boolean finished = false;
+
+    /**
      * Valore booleano per capire che azione c'è da fare, se split o merge.
      */
     protected boolean split = true;
@@ -86,6 +91,14 @@ public abstract class Splitter implements Runnable{
      */
     public void setFinalDirectory(String finalDirectory) {
         this.finalDirectory = finalDirectory;
+    }
+
+    /**
+     * Metodo per controllare lo stato della divisione, se è finita o meno.
+     * @return true se la divisione è finita, false altrimenti.
+     */
+    public boolean isFinished() {
+        return finished;
     }
 
     /**
