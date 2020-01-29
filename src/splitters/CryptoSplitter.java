@@ -240,5 +240,5 @@ public class CryptoSplitter extends Splitter implements Runnable {
         }
         finished = true;
     }
-    }
+    
 }
