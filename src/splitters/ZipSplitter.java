@@ -123,7 +123,7 @@ public class ZipSplitter extends Splitter implements Runnable {
         }
 
         //nome del file ricostruito
-        String nomeFileFinale = nomeFile + MERGE_EXTENSION;
+        String nomeFileFinale = MERGE_EXTENSION + nomeFile;
 
         int c = 1, dimBuf = DIM_MAX_BUF;
         byte[] buf = new byte[dimBuf];

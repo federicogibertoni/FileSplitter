@@ -160,7 +160,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
     /**
      * Metodo che implementa la ricostruzione del file precedentemente criptato con password indicata da utente.
      */
-    public void merge(){
+    public void merge() {
         byte[] digestedPass = MD5(pass);
         Key key = new SecretKeySpec(digestedPass, 0, digestedPass.length, "AES");
         //creo la chiave
@@ -169,7 +169,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         FileInputStream fis = null;
 
         //apro lo stream in chiaro per poter leggere l'IV
-        try{
+        try {
             fis = new FileInputStream(attuale);
             fis.read(iv);
         } catch (IOException e) {
@@ -194,7 +194,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         //nome del file originale
         String nomeFile = null;
         try {
-            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(SPLIT_EXTENSION)-1);
+            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(SPLIT_EXTENSION) - 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -206,16 +206,16 @@ public class CryptoSplitter extends Splitter implements Runnable {
         try {
             //apro gli stream
             cis = new CipherInputStream(fis, cipher);
-            fos = new FileOutputStream(new File(nomeFile + MERGE_EXTENSION));
+            fos = new FileOutputStream(new File(MERGE_EXTENSION + nomeFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        while(attuale.exists()) {
+        while (attuale.exists()) {
             try {
                 //ciclo di lettura e decifratura
                 int length = 0;
-                while ((length = cis.read(buf, 0 , buf.length)) >= 0)
+                while ((length = cis.read(buf, 0, buf.length)) >= 0)
                     fos.write(buf, 0, length);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -232,7 +232,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
                 e.printStackTrace();
             }
         }
-        try{
+        try {
             cis.close();            //chiudo gli stream
             fos.close();
         } catch (IOException e) {
@@ -240,5 +240,4 @@ public class CryptoSplitter extends Splitter implements Runnable {
         }
         finished = true;
     }
-    
 }

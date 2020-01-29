@@ -155,13 +155,11 @@ public class BufferedSplitter extends Splitter implements Runnable {
         byte[] buf = new byte[dimBuf];
 
         FileOutputStream output = null;
-        File attuale = startFile, out = new File(nomeFileFinale);
+        File attuale = startFile;
         FileInputStream fis = null;
         try {
             //apertura degli stream
-            if (!out.exists())
-                out.createNewFile();
-            output = new FileOutputStream(out);
+            output = new FileOutputStream(nomeFileFinale);
             fis = new FileInputStream(attuale);
         } catch (IOException e) {
             e.printStackTrace();

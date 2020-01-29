@@ -240,8 +240,16 @@ public class MainPanel extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
+            //vettore che conta i completati nella coda per poter riabilitare i bottoni
+            completed = new Vector<>(0);
+            for(Splitter sp : v){               //in questo modo tengo conto dei file che sono finiti ma ancora non
+                if(sp.getProgress() != 0)       //eliminati in coda dall'utente
+                    completed.add(true);
+            }
+
             //disabilito i bottoni durante la divisione
-            if(v.size() != 0) {
+            //se ci sono file in coda che non sono ancora stati divisi
+            if(v.size() != completed.size()) {
                 startQueueButton.setEnabled(false);
                 addSplitButton.setEnabled(false);
                 addMergeButton.setEnabled(false);
@@ -249,12 +257,6 @@ public class MainPanel extends JPanel {
                 deleteButton.setEnabled(false);
             }
 
-            //vettore che conta i completati nella coda per poter riabilitare i bottoni
-            completed = new Vector<>(0);
-            for(Splitter sp : v){               //in questo modo tengo conto dei file che sono finiti ma ancora non
-                if(sp.getProgress() != 0)       //eliminati in coda dall'utente
-                    completed.add(true);
-            }
 
             //per ogni file in coda comincio la sua divisione su un thread diverso
             for(Splitter sp : v) {
