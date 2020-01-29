@@ -1,5 +1,7 @@
 package splitters;
 
+import utils.MyUtils;
+
 import static utils.Const.*;
 import static utils.MyUtils.*;
 
@@ -201,12 +203,14 @@ public class CryptoSplitter extends Splitter implements Runnable {
         int dimBuf = DIM_MAX_BUF, c = 1;
         byte[] buf = new byte[dimBuf];
 
+        String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf("."));;
+
         CipherInputStream cis = null;
         FileOutputStream fos = null;
         try {
             //apro gli stream
             cis = new CipherInputStream(fis, cipher);
-            fos = new FileOutputStream(new File(MERGE_EXTENSION + nomeFile));
+            fos = new FileOutputStream(new File(nomeFileFinale));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }

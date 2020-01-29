@@ -32,7 +32,7 @@ public class Const {
     /**
      * Costante utilizzata in fase di riunione delle parti divise.
      */
-    public static final String MERGE_EXTENSION = "merge_";
+    public static final String MERGE_EXTENSION = "_merge";
 
     /**
      * Stringa di errore mostrata nel caso non siano riempiti i campi necessari nel JDialog.

@@ -1,5 +1,7 @@
 package splitters;
 
+import utils.MyUtils;
+
 import java.io.*;
 
 import static utils.Const.*;
@@ -149,7 +151,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
         }
 
         //nome del file ricostruito
-        String nomeFileFinale = MERGE_EXTENSION + nomeFile;
+        String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf("."));
 
         int c = 1, dimBuf = DIM_MAX_BUF;
         byte[] buf = new byte[dimBuf];
