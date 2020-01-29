@@ -1,6 +1,6 @@
 package splitters;
 
-import static utils.Const.DIM_MAX_BUF;
+import static utils.Const.*;
 import static utils.MyUtils.*;
 
 import javax.crypto.*;
@@ -108,7 +108,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         }
         try {
             fis = new FileInputStream(startFile);                //apro gli stream in modalità "in chiaro"
-            fos = new FileOutputStream(finalDirectory+File.separator+startFile.getName()+""+"1.par.crypto");
+            fos = new FileOutputStream(finalDirectory+File.separator+startFile.getName()+""+"1"+SPLIT_EXTENSION+CRYPT_EXTENSION);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -137,7 +137,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
                     cos.write(buf, 0, dimPar);
                     progress += dimPar;
                     cos.close();
-                    cos = new CipherOutputStream(new FileOutputStream(finalDirectory+File.separator+startFile.getName() + "" + (++c) + ".par.crypto"), cipher);
+                    cos = new CipherOutputStream(new FileOutputStream(finalDirectory+File.separator+startFile.getName() + "" + (++c) + SPLIT_EXTENSION + CRYPT_EXTENSION), cipher);
                     cos.write(buf, dimPar, rem);
                     dimPar = dimParTmp - rem;
 
@@ -194,7 +194,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         //nome del file originale
         String nomeFile = null;
         try {
-            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(".par")-1);
+            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(SPLIT_EXTENSION)-1);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -206,7 +206,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         try {
             //apro gli stream
             cis = new CipherInputStream(fis, cipher);
-            fos = new FileOutputStream(new File(nomeFile + "fine"));
+            fos = new FileOutputStream(new File(nomeFile + MERGE_EXTENSION));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -221,7 +221,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
                 e.printStackTrace();
             }
             //prossima parte da leggere
-            attuale = new File(nomeFile + (++c) + ".par.crypto");
+            attuale = new File(nomeFile + (++c) + SPLIT_EXTENSION + CRYPT_EXTENSION);
             try {
                 //se non sono finite le parti
                 if (attuale.exists()) {
@@ -239,5 +239,6 @@ public class CryptoSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
         finished = true;
+    }
     }
 }

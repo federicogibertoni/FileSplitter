@@ -5,7 +5,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import static utils.Const.DIM_MAX_BUF;
+import static utils.Const.*;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer e comprime tutte le partizioni create.
@@ -54,7 +54,7 @@ public class ZipSplitter extends Splitter implements Runnable {
     public void split() {
         assert startFile.exists();              //controllo che il file esista altrimenti termino l'esecuzione
 
-        String outputFile = startFile.getName()+"1.par";    //nome della prima ZipEntry
+        String outputFile = startFile.getName()+"1"+SPLIT_EXTENSION;    //nome della prima ZipEntry
 
         int c = 1, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
 
@@ -65,7 +65,7 @@ public class ZipSplitter extends Splitter implements Runnable {
 
         try{
             fis = new FileInputStream(startFile);       //creo gli stream
-            zos = new ZipOutputStream(new FileOutputStream(finalDirectory+File.separator+outputFile+".zip"));
+            zos = new ZipOutputStream(new FileOutputStream(finalDirectory+File.separator+outputFile+ZIP_EXTENSION));
 
             zos.putNextEntry(new ZipEntry(outputFile));     //inserisco la prima entry nel primo file
         } catch (IOException e) {
@@ -87,9 +87,9 @@ public class ZipSplitter extends Splitter implements Runnable {
                     progress += dimPar;
                     zos.closeEntry();               //chiudo la entry attuale visto che è finita
                     zos.close();
-                    zos = new ZipOutputStream(new FileOutputStream(finalDirectory+File.separator+startFile.getName() + "" + (++c) + ".par.zip"));
+                    zos = new ZipOutputStream(new FileOutputStream(finalDirectory+File.separator+startFile.getName() + "" + (++c) + SPLIT_EXTENSION+ZIP_EXTENSION));
                     //apro una nuova entry
-                    zos.putNextEntry(new ZipEntry(startFile.getName() + "" + (c) + ".par"));
+                    zos.putNextEntry(new ZipEntry(startFile.getName() + "" + (c) + SPLIT_EXTENSION));
                     zos.write(buf, dimPar, rem);
                     dimPar = dimParTmp-rem;
 
@@ -117,13 +117,13 @@ public class ZipSplitter extends Splitter implements Runnable {
         //nome del file originale per cercare le parti successive
         String nomeFile = null;
         try {
-            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(".par") - 1);
+            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(SPLIT_EXTENSION) - 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         //nome del file ricostruito
-        String nomeFileFinale = nomeFile + "fine";
+        String nomeFileFinale = nomeFile + MERGE_EXTENSION;
 
         int c = 1, dimBuf = DIM_MAX_BUF;
         byte[] buf = new byte[dimBuf];
@@ -156,7 +156,7 @@ public class ZipSplitter extends Splitter implements Runnable {
                 e.printStackTrace();
             }
             c++;                    //aggiorno il file da cui andrò a leggere
-            attuale = new File(nomeFile + (c) + ".par.zip"); //cambia l'input da cui leggere
+            attuale = new File(nomeFile + (c) + SPLIT_EXTENSION+ZIP_EXTENSION); //cambia l'input da cui leggere
             try {
                 //se le parti non sono finite
                 if (attuale.exists()) {

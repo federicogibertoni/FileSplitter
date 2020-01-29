@@ -2,7 +2,7 @@ package splitters;
 
 import java.io.*;
 
-import static utils.Const.DIM_MAX_BUF;
+import static utils.Const.*;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer.
@@ -94,7 +94,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
         FileOutputStream fos = null;
         try {
             fis = new FileInputStream(startFile);                //creo gli stream di lettura e scrittura
-            fos = new FileOutputStream(finalDirectory+File.separator+startFile.getName()+""+"1.par");
+            fos = new FileOutputStream(finalDirectory+File.separator+startFile.getName()+""+"1"+SPLIT_EXTENSION);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -116,7 +116,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
                     fos.write(buf, 0, dimPar);
                     progress += dimPar;
                     fos.close();
-                    fos = new FileOutputStream(finalDirectory+File.separator+startFile.getName() + "" + (++c) + ".par");
+                    fos = new FileOutputStream(finalDirectory+File.separator+startFile.getName() + "" + (++c) + SPLIT_EXTENSION);
                     fos.write(buf, dimPar, rem);
                     dimPar = dimParTmp-rem;         //reimposto la dimensione della partizione tenendo conto di quello che ho già scritto
 
@@ -143,13 +143,13 @@ public class BufferedSplitter extends Splitter implements Runnable {
         //nome del file originale
         String nomeFile = null;
         try {
-            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(".par")-1);
+            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(SPLIT_EXTENSION)-1);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         //nome del file ricostruito
-        String nomeFileFinale = nomeFile + "fine";
+        String nomeFileFinale = MERGE_EXTENSION + nomeFile;
 
         int c = 1, dimBuf = DIM_MAX_BUF;
         byte[] buf = new byte[dimBuf];
@@ -179,7 +179,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
                 e.printStackTrace();
             }
             //controllo se c'è un'altra parte
-            attuale = new File(nomeFile+(++c)+".par");
+            attuale = new File(nomeFile+(++c)+SPLIT_EXTENSION);
             try {
                 //se non sono finite le parti
                 if(attuale.exists()) {

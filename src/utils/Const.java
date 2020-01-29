@@ -15,6 +15,26 @@ public class Const {
     public static final int PROGRESS_BAR_COLUMN = 4;
 
     /**
+     * Costante utilizzata in tutte le divisioni per aggiungere l'estensione ".par" alla fine dei file.
+     */
+    public static final String SPLIT_EXTENSION = ".par";
+
+    /**
+     * Costante utilizzata nelle divisioni con cifratura del contenuto.
+     */
+    public static final String CRYPT_EXTENSION = ".crypto";
+
+    /**
+     * Costante utilizzata nelle divisioni con compressione del contenuto.
+     */
+    public static final String ZIP_EXTENSION = ".zip";
+
+    /**
+     * Costante utilizzata in fase di riunione delle parti divise.
+     */
+    public static final String MERGE_EXTENSION = "merge_";
+
+    /**
      * Stringa di errore mostrata nel caso non siano riempiti i campi necessari nel JDialog.
      */
     public static final String FIELD_ERROR_MESSAGE = "I campi adeguati non sono stati riempiti!\nIl file non sarà messo in coda.";
