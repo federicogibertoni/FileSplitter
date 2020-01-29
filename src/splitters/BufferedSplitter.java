@@ -2,6 +2,7 @@ package splitters;
 
 import utils.MyUtils;
 
+import javax.swing.*;
 import java.io.*;
 
 import static utils.Const.*;
@@ -197,5 +198,6 @@ public class BufferedSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
         finished = true;
+        JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
     }
 }

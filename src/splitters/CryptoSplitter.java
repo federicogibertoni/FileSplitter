@@ -8,6 +8,7 @@ import static utils.MyUtils.*;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.swing.*;
 
 import java.io.*;
 
@@ -243,5 +244,6 @@ public class CryptoSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
         finished = true;
+        JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
     }
 }

@@ -2,6 +2,7 @@ package splitters;
 
 import utils.MyUtils;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -176,5 +177,6 @@ public class ZipSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
         finished = true;
+        JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
     }
 }

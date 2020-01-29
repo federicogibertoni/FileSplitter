@@ -43,4 +43,9 @@ public class Const {
      * Titolo del JOptionPane che mostra l'errore nell'inserimento dei dati nei campi.
      */
     public static final String TITLE_FIELD_ERROR_MESSAGE = "Errore nell'input";
+
+    /**
+     * Stringa per avvisare che è finita l'unione del file selezionato.
+     */
+    public static final String FINISHED_MERGE_MESSAGE = "Finita l'unione del file.";
 }
