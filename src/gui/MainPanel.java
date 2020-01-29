@@ -220,6 +220,7 @@ public class MainPanel extends JPanel {
             //dico che un altro SwingWorker è stato completato
             completed.add(true);
 
+
             //se il numero di completati è pari alla lunghezza della coda allora riabilito i bottoni
             if(completed.size() == v.size()) {
                 startQueueButton.setEnabled(true);
@@ -251,26 +252,18 @@ public class MainPanel extends JPanel {
                 deleteButton.setEnabled(false);
             }
 
-            //creo un vettore di elementi tutti inizializzati a falso e li travaso in un Vector
-            //così diventa Thread Safe.
-//            Boolean[] status = new Boolean[v.size()];
-//            Arrays.fill(status, false);
+            //vettore che conta i completati nella coda per poter riabilitare i bottoni
             completed = new Vector<>(0);
-
-            for(Splitter sp : v){
-                if(sp.getProgress() == 0)
-                    new StartWorker(v.indexOf(sp)).execute();
+            for(Splitter sp : v){               //in questo modo tengo conto dei file che sono finiti ma ancora non
+                if(sp.getProgress() != 0)       //eliminati in coda dall'utente
+                    completed.add(true);
             }
 
-            //controllo che tutta la coda abbia finito prima di riabilitare i bottoni
-            /*boolean finished = false;
-            while(!finished) {
-                finished = true;
-                for (Splitter sp : v){
-                    if(!sp.isFinished())
-                        finished = sp.isFinished();
-                }
-            }*/
+            //per ogni file in coda comincio la sua divisione su un thread diverso
+            for(Splitter sp : v) {
+                if (sp.getProgress() == 0)
+                    new StartWorker(v.indexOf(sp)).execute();
+            }
         }
     }
 
