@@ -203,7 +203,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         int dimBuf = DIM_MAX_BUF, c = 1;
         byte[] buf = new byte[dimBuf];
 
-        String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf("."));;
+        String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf(".")-1);;
 
         CipherInputStream cis = null;
         FileOutputStream fos = null;
