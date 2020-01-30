@@ -321,34 +321,35 @@ public class MainPanel extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser chooser = new JFileChooser();
-            chooser.setMultiSelectionEnabled(true);
-            chooser.showDialog(getParent(), "Apri");
-            File att = chooser.getSelectedFile();
+            chooser.setMultiSelectionEnabled(false);
+            if(chooser.showDialog(getParent(), "Apri") == JFileChooser.APPROVE_OPTION) {
+                File att = chooser.getSelectedFile();
 
-            Thread t = null;
-            switch (att.getName().substring(att.getName().lastIndexOf("."), att.getName().length())){
-                case ".crypto":
-                    PasswordMergeDialog dialog = new PasswordMergeDialog();
-                    dialog.pack();
-                    dialog.setLocation(0, 0);
-                    dialog.setLocationRelativeTo(null);
-                    dialog.setVisible(true);
+                Thread t = null;
+                switch (att.getName().substring(att.getName().lastIndexOf("."), att.getName().length())) {
+                    case ".crypto":
+                        PasswordMergeDialog dialog = new PasswordMergeDialog();
+                        dialog.pack();
+                        dialog.setLocation(0, 0);
+                        dialog.setLocationRelativeTo(null);
+                        dialog.setVisible(true);
 
-                    //controllo che il campo password sia stato inserito
-                    if(dialog.getPassValue().getPassword().length != 0)
-                        t = new Thread(new CryptoSplitter(att, false, new String(dialog.getPassValue().getPassword())));
-                    else
-                        JOptionPane.showMessageDialog(getParent(), FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
-                    break;
-                case ".zip":
-                    t = new Thread(new ZipSplitter(att, false));
-                    break;
-                case ".par":
-                    t = new Thread(new BufferedSplitter(att, false));
-                    break;
+                        //controllo che il campo password sia stato inserito
+                        if (dialog.getPassValue().getPassword().length != 0)
+                            t = new Thread(new CryptoSplitter(att, false, new String(dialog.getPassValue().getPassword())));
+                        else
+                            JOptionPane.showMessageDialog(getParent(), FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
+                        break;
+                    case ".zip":
+                        t = new Thread(new ZipSplitter(att, false));
+                        break;
+                    case ".par":
+                        t = new Thread(new BufferedSplitter(att, false));
+                        break;
+                }
+                if (t != null)
+                    t.start();
             }
-            if(t != null)
-                t.start();
         }
     }
 

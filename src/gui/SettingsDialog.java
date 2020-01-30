@@ -133,12 +133,12 @@ public class SettingsDialog extends JDialog {
         public void actionPerformed(ActionEvent e) {
             JFileChooser dirChooser = new JFileChooser();
             dirChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-            dirChooser.showDialog(getParent(), "Apri");
-
-            try {
-                dirLabel.setText(dirChooser.getSelectedFile().getCanonicalPath());
-            } catch (IOException ex) {
-                ex.printStackTrace();
+            if(dirChooser.showDialog(getParent(), "Apri") == JFileChooser.APPROVE_OPTION) {
+                try {
+                    dirLabel.setText(dirChooser.getSelectedFile().getCanonicalPath());
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         }
     }
