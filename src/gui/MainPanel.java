@@ -10,6 +10,7 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.List;
 import java.util.Vector;
@@ -88,6 +89,8 @@ public class MainPanel extends JPanel {
         }
     }
 
+
+
     /**
      * Listener che viene agganciato al bottone di aggiunta di un nuovo file.
      */
@@ -111,43 +114,13 @@ public class MainPanel extends JPanel {
                 dialog.setLocation(0, 0);
                 dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
-                if(validateFields(dialog))
+
+                if(dialog.getState())
                     addElementToVector(att, dialog);
             }
 
             data.fireTableDataChanged();
         }
-    }
-
-    /**
-     * Metodo privato per controllare che i campi richiesti dal JDialog siano tutti riempiti alla sua chiusura.
-     * @param dialog Il JDialog da controllare.
-     * @return true se i campi sono tutti completati, false altrimenti.
-     */
-    private boolean validateFields(SettingsDialog dialog) {
-        switch (dialog.getModValue().getSelectedIndex()){
-            case 0: //se è la divisione "classica"
-            case 2: //se è la divisione con compressione
-                if(dialog.getDimValue().getText().length() == 0) {
-                    JOptionPane.showMessageDialog(this, FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
-                    return false;
-                }
-                break;
-            case 1: //se è la divisione con cifratura
-                if(dialog.getDimValue().getText().length() == 0 || dialog.getPassValue().getPassword().length == 0) {
-                    JOptionPane.showMessageDialog(this, FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
-                    return false;
-                }
-                break;
-            case 3: //se è la divisione con numero di parti
-                if(dialog.getnPartiValue().getText().length() == 0) {
-                    JOptionPane.showMessageDialog(this, FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
-                    return false;
-                }
-                break;
-        }
-
-        return true;
     }
 
     /*
@@ -322,7 +295,7 @@ public class MainPanel extends JPanel {
 
                     //rimuovo il file vecchio e lo rimetto aggiornato nella tabella
                     File attuale = tmp.getStartFile();
-                    if(validateFields(sd)){
+                    if(sd.getState()){
                         v.remove(a[i]);
                         addElementToVector(attuale, sd);
                     }
@@ -452,5 +425,7 @@ public class MainPanel extends JPanel {
         deleteButton.addActionListener(new EliminaActionListener());
         deleteButton.setActionCommand("elimina");
         add(deleteButton);
+
+        this.registerKeyboardAction(new EliminaActionListener(), KeyStroke.getKeyStroke(KeyEvent.VK_CANCEL, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 }

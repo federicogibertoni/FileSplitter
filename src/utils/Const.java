@@ -37,7 +37,7 @@ public class Const {
     /**
      * Stringa di errore mostrata nel caso non siano riempiti i campi necessari nel JDialog.
      */
-    public static final String FIELD_ERROR_MESSAGE = "I campi adeguati non sono stati riempiti!\nIl file non sarà messo in coda.";
+    public static final String FIELD_ERROR_MESSAGE = "I campi adeguati non sono stati riempiti!";
 
     /**
      * Titolo del JOptionPane che mostra l'errore nell'inserimento dei dati nei campi.

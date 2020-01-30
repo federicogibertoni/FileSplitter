@@ -9,6 +9,9 @@ import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 
+import static utils.Const.FIELD_ERROR_MESSAGE;
+import static utils.Const.TITLE_FIELD_ERROR_MESSAGE;
+
 /**
  * Classe che implementa il Dialog che viene aperto quando si aggiunge un nuovo file alla coda oppure se si vogliono modificare le impostazioni.
  */
@@ -61,16 +64,19 @@ public class SettingsDialog extends JDialog {
      * Label che andrà ad indicare il file attuale che si sta trattando.
      */
     private JLabel fileName;
-
     /**
      * Label che rappresenta dove andrà il file diviso.
      */
     private JLabel dirLabel;
-
     /**
      * Bottone che permette di aprire un JFileChooser per scegliere la directory.
      */
     private JButton dirValue;
+
+    /**
+     * Valore booleano che permette di capire se è andata a buon fine o meno la compilazione dei parametri.
+     */
+    private boolean state;
 
     /**
      * Classe interna che implementa il listener per animare i campi del dialog a seconda della selezione della JComboBox.
@@ -385,14 +391,50 @@ public class SettingsDialog extends JDialog {
      * Metodo che viene chiamato nel caso in cui venga chiuso positivamente il Dialog.
      */
     private void onOK() {
-        dispose();
+        if(validateFields()) {
+            state = true;
+            dispose();
+        }
+        else
+            state = false;
     }
 
     /**
      * Metodo che viene chiamato nel caso in cui venga chiuso negativamente il Dialog.
      */
     private void onCancel() {
+        state = false;
         dispose();
+    }
+
+    /**
+     * Metodo privato per controllare che i campi richiesti dal JDialog nel metodo di divisione siano tutti riempiti alla sua chiusura.
+     * @return true se i campi sono tutti completati, false altrimenti.
+     */
+    private boolean validateFields() {
+        switch (getModValue().getSelectedIndex()){
+            case 0: //se è la divisione "classica"
+            case 2: //se è la divisione con compressione
+                if(getDimValue().getText().length() == 0) {
+                    JOptionPane.showMessageDialog(this, FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                break;
+            case 1: //se è la divisione con cifratura
+                if(getDimValue().getText().length() == 0 || getPassValue().getPassword().length == 0) {
+                    JOptionPane.showMessageDialog(this, FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                break;
+            case 3: //se è la divisione con numero di parti
+                if(getnPartiValue().getText().length() == 0) {
+                    JOptionPane.showMessageDialog(this, FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
+                    return false;
+                }
+                break;
+        }
+
+        return true;
     }
 
     /**
@@ -425,5 +467,13 @@ public class SettingsDialog extends JDialog {
      */
     public JLabel getDirLabel() {
         return dirLabel;
+    }
+
+    /**
+     * Metodo che ritorna lo stato del JDialog alla chiusura e dopo aver controllato la completezza dei suoi campi.
+     * @return true se è stato compilato correttamente, false altrimenti.
+     */
+    public boolean getState() {
+        return state;
     }
 }

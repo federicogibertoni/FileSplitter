@@ -1,6 +1,13 @@
 package utils;
 
+import gui.SettingsDialog;
+
+import javax.swing.*;
+import java.awt.*;
 import java.security.*;
+
+import static utils.Const.FIELD_ERROR_MESSAGE;
+import static utils.Const.TITLE_FIELD_ERROR_MESSAGE;
 
 /**
  * Classe che contiene alcune funzioni di utilità.
@@ -43,4 +50,5 @@ public class MyUtils {
         }
         return newString;
     }
+
 }
