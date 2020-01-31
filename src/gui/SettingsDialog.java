@@ -14,6 +14,7 @@ import static utils.Const.TITLE_FIELD_ERROR_MESSAGE;
 
 /**
  * Classe che implementa il Dialog che viene aperto quando si aggiunge un nuovo file alla coda oppure se si vogliono modificare le impostazioni.
+ * Sottoclasse di {@link JDialog JDialog}
  */
 public class SettingsDialog extends JDialog {
     /**
@@ -30,6 +31,7 @@ public class SettingsDialog extends JDialog {
     private JButton buttonCancel;
     /**
      * ComboBox che permette di effettuare la scelta del tipo di divisione da effettuare.
+     * @see JComboBox
      */
     private JComboBox modValue;
     /**
@@ -70,16 +72,16 @@ public class SettingsDialog extends JDialog {
     private JLabel dirLabel;
     /**
      * Bottone che permette di aprire un JFileChooser per scegliere la directory.
+     * @see JFileChooser
      */
     private JButton dirValue;
-
     /**
-     * Valore booleano che permette di capire se è andata a buon fine o meno la compilazione dei parametri.
+     * Valore booleano che permette di capire se è andata a buon fine o meno la compilazione dei campi.
      */
     private boolean state;
 
     /**
-     * Classe interna che implementa il listener per animare i campi del dialog a seconda della selezione della JComboBox.
+     * Classe interna che implementa il {@link ActionListener listener} per animare i campi del dialog a seconda della selezione della JComboBox.
      */
     private class ComboSelectionListener implements ActionListener{
 
@@ -185,7 +187,7 @@ public class SettingsDialog extends JDialog {
 
     /**
      * Metodo privato che imposta il layout per tutto il dialog.
-     * Fa uso di un GroupLayout.
+     * Fa uso di un {@link GroupLayout GroupLayout}.
      */
     private void setDialogLayout(){
         GroupLayout groupLayout = new GroupLayout(contentPane);
@@ -262,7 +264,6 @@ public class SettingsDialog extends JDialog {
         super();
 
         initComponents();
-
         setDialogLayout();
 
         //aggiungo listener ai bottoni
@@ -309,7 +310,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Costruttore del dialog chiamato in fase di modifica di un file settato con BufferedSplitter.
+     * Costruttore del dialog chiamato in fase di modifica di un file settato con {@link BufferedSplitter BufferedSplitter}.
      * @param tmp BufferedSplitter che sarà modificato, da cui prendo i dati da mostrare.
      */
     public SettingsDialog(BufferedSplitter tmp) {
@@ -318,6 +319,7 @@ public class SettingsDialog extends JDialog {
         passLabel.setEnabled(false);
         passValue.setEnabled(false);
 
+        //decido che campi abilitare e imposto i vecchi valori
         if(!tmp.isParti()){
             dimLabel.setEnabled(false);
             dimValue.setEnabled(false);
@@ -342,7 +344,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Costruttore del dialog chiamato in fase di modifica di un file settato con CryptoSplitter.
+     * Costruttore del dialog chiamato in fase di modifica di un file settato con {@link CryptoSplitter CryptoSplitter}.
      * @param c CryptoSplitter che sarà modificato, da cui prendo i dati da mostrare.
      */
     public SettingsDialog(CryptoSplitter c) {
@@ -361,7 +363,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Costruttore del dialog chiamato in fase di modifica di un file settato con ZipSplitter.
+     * Costruttore del dialog chiamato in fase di modifica di un file settato con {@link ZipSplitter ZipSplitter}.
      * @param z ZipSplitter che sarà modificato, da cui prendo i dati da mostrare.
      */
     public SettingsDialog(ZipSplitter z){
@@ -389,6 +391,7 @@ public class SettingsDialog extends JDialog {
 
     /**
      * Metodo che viene chiamato nel caso in cui venga chiuso positivamente il Dialog.
+     * Viene controllata la corretta compilazione con {@link #validateFields() validateFields()}.
      */
     private void onOK() {
         if(validateFields()) {
@@ -408,7 +411,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Metodo privato per controllare che i campi richiesti dal JDialog nel metodo di divisione siano tutti riempiti alla sua chiusura.
+     * Metodo privato per controllare che i campi richiesti dal dialog nel metodo di divisione siano tutti riempiti alla sua chiusura.
      * @return true se i campi sono tutti completati, false altrimenti.
      */
     private boolean validateFields() {
@@ -470,7 +473,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Metodo che ritorna lo stato del JDialog alla chiusura e dopo aver controllato la completezza dei suoi campi.
+     * Metodo che ritorna lo stato del dialog alla chiusura e dopo aver controllato la completezza dei suoi campi.
      * @return true se è stato compilato correttamente, false altrimenti.
      */
     public boolean getState() {

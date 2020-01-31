@@ -9,6 +9,8 @@ import static utils.Const.*;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer.
+ * È sottoclasse di {@link Splitter Splitter}.
+ * @see Runnable
  */
 public class BufferedSplitter extends Splitter implements Runnable {
 
@@ -28,7 +30,8 @@ public class BufferedSplitter extends Splitter implements Runnable {
     private boolean parti;
 
     /**
-     * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file. Chiamato in fase di divisone alla chiusura del SettingsDialog.
+     * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file.
+     * Chiamato in fase di divisone alla chiusura del {@link gui.SettingsDialog SettingDialog}.
      * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param dimPar Dimensione di ogni parte.
@@ -41,7 +44,8 @@ public class BufferedSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere. Chiamato in fase di divisone alla chiusura del SettingsDialog.
+     * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere.
+     * Chiamato in fase di divisone alla chiusura del {@link gui.SettingsDialog SettingDialog}.
      * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param numPar Numero massimo di file da generare.
@@ -55,7 +59,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Costruttore dello Splitter, chiamato in fase di unione delle parti.
+     * Costruttore dello Splitter, chiamato in fase di unione delle parti da UnioneActionListener, contenuto in {@link gui.MainPanel MainPanel}.
      * @param f File di partenza.
      * @param split true se il file è da dividere, false se è da unire.
      */
@@ -88,7 +92,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Metodo che implementa la divisione di file in dimensioni uguali(tranne l'ultimo) tramite un buffer.
+     * Metodo che implementa la divisione del file in dimensioni uguali (tranne l'ultimo) tramite un buffer.
      */
     public void split() {
         assert startFile.exists();           //controllo che il file esista, altrimenti termino l'esecuzione
@@ -102,8 +106,8 @@ public class BufferedSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
-        int c = 1, length = 0, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
-        byte[] buf = new byte[dimBuf];
+        int c = 1, length = 0, dimParTmp = dimPar;
+        byte[] buf = new byte[DIM_MAX_BUF];
 
         try {
             while ((length = fis.read(buf, 0, buf.length)) >= 0){
@@ -136,7 +140,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finished = true;
+        finished = true;                //imposto lo stato a finito.
     }
 
     /**
@@ -154,8 +158,8 @@ public class BufferedSplitter extends Splitter implements Runnable {
         //nome del file ricostruito
         String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf(".")-1);
 
-        int c = 1, dimBuf = DIM_MAX_BUF;
-        byte[] buf = new byte[dimBuf];
+        int c = 1;
+        byte[] buf = new byte[DIM_MAX_BUF];
 
         FileOutputStream output = null;
         File attuale = startFile;
@@ -169,7 +173,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
         }
         int length = 0;
 
-        //se la parte attuale esiste
+        //se la parte attuale esiste, cioè ci sono ancora parti da leggere
         while(attuale.exists()){
             try {
                 //ciclo di lettura
@@ -197,7 +201,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finished = true;
+        finished = true;            //imposto lo stato a finito e lo comunico
         JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
     }
 }

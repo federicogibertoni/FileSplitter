@@ -4,12 +4,13 @@ import java.io.File;
 
 /**
  * Classe astratta da cui derivano tutti gli Splitter.
- * Qui dentro è contenuto il file da cui inizierà lo split nelle varie istanze.
+ * Qui dentro è contenuto il file da dividire nei diversi modi.
+ * @see Runnable
  */
 public abstract class Splitter implements Runnable{
 
     /**
-     * Il file da dividere.
+     * Il file verrà effettuata la divisione o l'unione.
      */
     protected File startFile;
 
@@ -19,12 +20,12 @@ public abstract class Splitter implements Runnable{
     protected double progress = 0;
 
     /**
-     * Attributo per controllare se la divisione di un file è finita o meno.
+     * Attributo per controllare se la divisione del file è finita o meno.
      */
     protected boolean finished = false;
 
     /**
-     * Valore booleano per capire che azione c'è da fare, se split o merge.
+     * Valore booleano per capire che cosa fare col file, se dividerlo o unirlo alle altre parti.
      */
     protected boolean split = true;
 
@@ -34,9 +35,10 @@ public abstract class Splitter implements Runnable{
     protected String finalDirectory = "";
 
     /**
-     * Costruttore per inizializzare il file da dividere.
-     * @param f File da dividere.
+     * Costruttore per inizializzare il file.
+     * @param f File su cui lavorare.
      * @param split true se il file è da dividere, false se è da unire.
+     * @param dir Directory dove andranno i file divisi, "" se è da unire.
      */
     public Splitter(File f, boolean split, String dir){
         startFile = f;
@@ -45,17 +47,7 @@ public abstract class Splitter implements Runnable{
     }
 
     /**
-     * Costruttore per inizializzare il file da dividere.
-     * @param path Path del file da dividere.
-     * @param split true se il file è da dividere, false se è da unire.
-     */
-    public Splitter(String path, boolean split){
-        startFile = new File(path);
-        this.split = split;
-    }
-
-    /**
-     * Metodo che ritorna il numero di byte letti finora.
+     * Metodo che ritorna il numero di byte letti finora durante la divisione.
      * @return Numero di byte letti.
      */
     public double getProgress() {
@@ -63,7 +55,7 @@ public abstract class Splitter implements Runnable{
     }
 
     /**
-     * Metodo che setta il valore del progresso nella divisione di un file.
+     * Metodo che setta il valore del progresso nella divisione del file.
      * @param progress Valore attuale del progresso.
      */
     public void setProgress(double progress) {
@@ -71,7 +63,7 @@ public abstract class Splitter implements Runnable{
     }
 
     /**
-     * Metodo per ottenere il file da dividere.
+     * Metodo per ottenere il file su cui lavorare.
      * @return File da dividere.
      */
     public File getStartFile() {
@@ -88,6 +80,7 @@ public abstract class Splitter implements Runnable{
 
     /**
      * Metodo per impostare la directory dove andrà il file diviso.
+     * @param finalDirectory Directory in cui mettere i file divisi.
      */
     public void setFinalDirectory(String finalDirectory) {
         this.finalDirectory = finalDirectory;
@@ -102,18 +95,18 @@ public abstract class Splitter implements Runnable{
     }
 
     /**
-     * Ogni Splitter dovrà implementare questo metodo per effettuare la divisione.
+     * Ogni Splitter dovrà implementare questo metodo per effettuare la divisione del file.
      */
     abstract void split();
 
     /**
-     * Ogni Splitter dovrà implementare questo metodo per effettuare la ricostruzione.
+     * Ogni Splitter dovrà implementare questo metodo per effettuare la ricostruzione delle parti.
      */
     abstract void merge();
 
     /**
-     * Metodo che sovrascrive quello implementato dall'interfaccia Runnable.
-     * A seconda del valore dell'attributo split verrà eseguita la divisione o l'unione
+     * Metodo che sovrascrive quello implementato dall'interfaccia {@link Runnable Runnable}.
+     * A seconda del valore dell'attributo split verrà eseguita la divisione o l'unione.
      */
     @Override
     public void run(){

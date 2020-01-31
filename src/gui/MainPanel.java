@@ -23,7 +23,7 @@ import static utils.Const.*;
  */
 public class MainPanel extends JPanel {
     /**
-     * JButton che rappresenta il bottone per avviare la divisione dei files in coda di divisone.
+     * JButton che rappresenta il bottone per avviare la divisione dei file in coda.
      */
     private JButton startQueueButton;
 
@@ -33,27 +33,29 @@ public class MainPanel extends JPanel {
     private JButton addSplitButton;
 
     /**
-     * JButton che rappresenta il bottone per selezionare un file da unire.
+     * JButton che rappresenta il bottone per selezionare un file da unire con le sue altre parti.
      */
     private JButton addMergeButton;
 
     /**
-     * JButton che rappresenta il bottone per modificare i files che sono nella coda di divisione.
+     * JButton che rappresenta il bottone per modificare i file selezionati in coda.
      */
     private JButton editButton;
 
     /**
-     * JButton che rappresenta il bottone per cancellare i files dalla coda di divisione.
+     * JButton che rappresenta il bottone per cancellare i file selezionati dalla coda.
      */
     private JButton deleteButton;
 
     /**
      * Modello su cui si basa la tabella.
+     * @see QueueTableModel
      */
     private QueueTableModel data;
 
     /**
-     * Vettore che contiene tutte le righe della tabella.
+     * Vettore che contiene tutte le righe della tabella, ognuna rappresenta un file su cui lavorare.
+     * @see Splitter
      */
     private Vector<Splitter> v = new Vector<>();
 
@@ -69,7 +71,7 @@ public class MainPanel extends JPanel {
 
     /**
      * Metodo di appoggio per aggiungere un nuovo file al vettore delle righe una volta che sono state scelte le relative impostazioni.
-     * @param att File che si sta caricando.
+     * @param att File che si sta aggiungendo alla coda.
      * @param dialog Dialog personalizzato contenente i dati da mettere nella tabella e per creare gli oggetti Splitter.
      */
     private void addElementToVector(File att, SettingsDialog dialog) {
@@ -89,25 +91,27 @@ public class MainPanel extends JPanel {
         }
     }
 
-
-
     /**
      * Listener che viene agganciato al bottone di aggiunta di un nuovo file.
+     * @see ActionListener
      */
     private class AggiuntaActionListener implements ActionListener {
 
         /**
-         * Una volta premuto il bottone si apre un JFileChooser per scegliere più file da aggiungere e per ognuno si aprono le impostazioni in un Dialog.
-         * Infine i nuovi file sono aggiunti al vettore con addElementToVector(File att, SettingsDialog dialog) e la tabella viene aggiornata.
+         * Una volta premuto il bottone si apre un JFileChooser per scegliere più file da aggiungere e per ognuno si aprono le impostazioni in un {@link SettingsDialog SettingDialog}.
+         * Infine i nuovi file sono aggiunti al vettore con {@link #addElementToVector(File, SettingsDialog) addElementToVector} e la tabella viene aggiornata.
          * @param e Evento che è stato generato.
+         * @see JFileChooser
          */
         @Override
         public void actionPerformed(ActionEvent e) {
+            //il filechooser mi fa scegliere più file da aggiungere
             JFileChooser chooser = new JFileChooser();
             chooser.setMultiSelectionEnabled(true);
             chooser.showDialog(getParent(), "Apri");
             File[] scelte = chooser.getSelectedFiles();
 
+            //per ogni file apro un dialog
             for(File att : scelte){
                 SettingsDialog dialog = new SettingsDialog(att);
                 dialog.pack();
@@ -115,10 +119,11 @@ public class MainPanel extends JPanel {
                 dialog.setLocationRelativeTo(null);
                 dialog.setVisible(true);
 
+                //se tutti i campi sono completi allora lo aggiungo alla tabella
                 if(dialog.getState())
                     addElementToVector(att, dialog);
             }
-
+            //aggiorno la tabella
             data.fireTableDataChanged();
         }
     }
@@ -134,15 +139,17 @@ public class MainPanel extends JPanel {
 
     /**
      * Classe per effettuare la divisione dei file su thread paralleli e nel frattempo aggiornare la grafica della tabella.
+     * Fa uso di uno SwingWorker per gestire i thread.
+     * @see SwingWorker
      */
     private class StartWorker extends SwingWorker<Boolean, Integer>{
         /**
-         * Indice della riga rappresentante il file da dividere nell'array di tutti i files.
+         * Indice della riga rappresentante il file da dividere nell'array di tutti i file.
          */
         private int index;
 
         /**
-         * Costruttore dello SwingWorker.
+         * Costruttore dello StartWorker.
          * @param i Indice della riga rappresentante il file da dividere.
          */
         public StartWorker(int i){
@@ -150,23 +157,26 @@ public class MainPanel extends JPanel {
         }
 
         /**
-         * Metodo che esegue i calcoli del componente su un thread parallelo e nel frattempo invia i risultati parziali al metodo process() tramite publish().
+         * Metodo che esegue i calcoli della divisione su un thread parallelo e nel frattempo
+         * invia i risultati parziali al metodo {@link #process(List) process()} tramite publish().
          * Usato per far partire le divisioni dei file nella coda e seguire il loro andamento.
-         * @return Ritorna il valore sullo stato dell'esecuzione del thread parallelo, se è finito o meno.
+         * @return Ritorna il valore sullo stato dell'esecuzione del thread parallelo, se è finito con successo o meno.
          */
         @Override
         protected Boolean doInBackground() {
-            setProgress(0);
+            setProgress(0);                         //il progresso parte da zero
 
-            Thread t = new Thread(v.elementAt(index));
+            Thread t = new Thread(v.elementAt(index));      //viene fatto partire il thread
             t.start();
 
             while(t.getState() != Thread.State.TERMINATED){
+                //finché non è finita la divisione continuo a modificare il valore del progresso
                 double progress = (v.elementAt(index).getProgress() / v.elementAt(index).getStartFile().length() * 100f);
                 setProgress((int)progress);
                 publish((int)progress);
             }
 
+            //setto il progresso alla fine
             setProgress(100);
             publish(100);
             return true;
@@ -182,14 +192,13 @@ public class MainPanel extends JPanel {
         }
 
         /**
-         * Metodo invocato alla fine di doInBackground(). Si occupa di capire se lo StartWorker
+         * Metodo invocato alla fine di {@link #doInBackground() doInBackground()}. Si occupa di capire se lo StartWorker
          * appena terminato era l'ultimo e nel caso riabilita i bottoni della gui.
          */
         @Override
         protected void done(){
             //dico che un altro SwingWorker è stato completato
             completed.add(true);
-
 
             //se il numero di completati è pari alla lunghezza della coda allora riabilito i bottoni
             if(completed.size() == v.size()) {
@@ -203,12 +212,14 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Listener che viene agganciato al bottone per avviare il processo di split/merge.
+     * Listener che viene agganciato al bottone per avviare l'esecuzione della divisione dei file in coda.
      */
     private class StartActionListener implements ActionListener {
 
         /**
-         * Una volta premuto il bottone per la partenza viene svuotata tutta la coda facendo partire la divisione su un thread diverso per ogni file.
+         * Una volta premuto il bottone per la partenza viene fatta
+         * partire la divisione su un thread diverso per ogni file.
+         * I bottoni vengono disabilitati fino alla fine di tutte le divisioni.
          * @param e Evento che è stato generato.
          */
         @Override
@@ -240,7 +251,7 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Listener che viene agganciato al bottone per eliminare file dalla coda.
+     * Listener che viene agganciato al bottone per eliminare file selezionati dalla coda.
      */
     private class EliminaActionListener implements ActionListener{
 
@@ -261,12 +272,12 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Listener che viene agganciato al bottone per modificare i parametri dei file in coda.
+     * Listener che viene agganciato al bottone per modificare i parametri dei file selezionati dalla coda.
      */
     private class ModificaActionListener implements ActionListener{
 
         /**
-         * Viene riaperto il dialog delle impostazioni per i file selezionato da modificare.
+         * Viene riaperto il {@link SettingsDialog SettingsDialog} per i file selezionati da modificare.
          * Il file modificato verrà poi eliminato dalla tabella e reinserito aggiornato.
          * @param e Evento che è stato generato.
          */
@@ -294,6 +305,7 @@ public class MainPanel extends JPanel {
                     sd.setVisible(true);
 
                     //rimuovo il file vecchio e lo rimetto aggiornato nella tabella
+                    //se tutti i campi sono stati completati
                     File attuale = tmp.getStartFile();
                     if(sd.getState()){
                         v.remove(a[i]);
@@ -301,6 +313,7 @@ public class MainPanel extends JPanel {
                     }
                 }
 
+                //aggiorno la tabella
                 data.fireTableDataChanged();
             }
         }
@@ -308,20 +321,22 @@ public class MainPanel extends JPanel {
     }
 
     /**
-     * Listener che viene agganciato al bottone per selezionare un file da unire.
+     * Listener che viene agganciato al bottone per selezionare un file da unire al resto delle sue parti.
      */
     private class UnioneActionListener implements ActionListener{
 
         /**
          * Viene aperto un JFileChooser per permettere di scegliere il file da riunire.
          * Una volta scelto viene iniziato il processo di unione a seconda del tipo di divisione che era stata effettuata.
-         * Nel caso sia richiesta una password compare un Dialog per inserirla.
+         * Nel caso sia richiesta una password compare un {@link PasswordMergeDialog Dialog} per inserirla.
          * @param e Evento che è stato generato.
+         * @see JFileChooser
          */
         @Override
         public void actionPerformed(ActionEvent e) {
             JFileChooser chooser = new JFileChooser();
             chooser.setMultiSelectionEnabled(false);
+            //l'unione inizia solo se un file è selezionato
             if(chooser.showDialog(getParent(), "Apri") == JFileChooser.APPROVE_OPTION) {
                 File att = chooser.getSelectedFile();
 
@@ -335,10 +350,8 @@ public class MainPanel extends JPanel {
                         dialog.setVisible(true);
 
                         //controllo che il campo password sia stato inserito
-                        if (dialog.getPassValue().getPassword().length != 0)
+                        if (dialog.getState())
                             t = new Thread(new CryptoSplitter(att, false, new String(dialog.getPassValue().getPassword())));
-                        else
-                            JOptionPane.showMessageDialog(getParent(), FIELD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
                         break;
                     case ".zip":
                         t = new Thread(new ZipSplitter(att, false));
@@ -355,6 +368,8 @@ public class MainPanel extends JPanel {
 
     /**
      * Classe che implementa il Render per una cella specifica della tabella che contiene la JProgressBar.
+     * @see TableCellRenderer
+     * @see JProgressBar
      */
     private class ProgressCellRender extends JProgressBar implements TableCellRenderer {
         /**
@@ -392,6 +407,7 @@ public class MainPanel extends JPanel {
         tab = new JTable(data);
         tab.setSize(800, 500);
 
+        //setto il render per la cella contenente la progressbar
         tab.getColumn(data.getColumnName(PROGRESS_BAR_COLUMN)).setCellRenderer(new ProgressCellRender());
 
         add(tab);
@@ -426,7 +442,5 @@ public class MainPanel extends JPanel {
         deleteButton.addActionListener(new EliminaActionListener());
         deleteButton.setActionCommand("elimina");
         add(deleteButton);
-
-        this.registerKeyboardAction(new EliminaActionListener(), KeyStroke.getKeyStroke(KeyEvent.VK_CANCEL, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 }

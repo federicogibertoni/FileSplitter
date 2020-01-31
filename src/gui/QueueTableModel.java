@@ -8,11 +8,12 @@ import java.util.Vector;
 import static utils.Const.PROGRESS_BAR_COLUMN;
 
 /**
- * Classe che estende DefaultTableModel, implementa il modello attuale della tabella con 5 colonne.
+ * Classe che implementa il modello della tabella che rappresenta la coda di esecuzione.
+ * Estende la classe {@link DefaultTableModel DefaultTableModel}.
  */
 public class QueueTableModel extends DefaultTableModel {
     /**
-     * Vector che contiene tutti i valori da visualizzare nella tabella.
+     * Vettore che contiene tutti i valori da visualizzare nella tabella.
      */
     private Vector<Splitter> v = null;
 
@@ -22,10 +23,10 @@ public class QueueTableModel extends DefaultTableModel {
     private String[] col = {"File", "Modalità", "Grandezza", "Directory", "Progresso"};
 
     /**
-     * Costruttore del TableModel.
+     * Costruttore del QueueTableModel.
      * @param e Vettore contenente i nomi delle colonne da mostrare.
      * @param rowCount Numero di righe iniziale del modello.
-     * @param vec Vector dei dati che viene aggangiato al modello.
+     * @param vec Vettore dei dati che viene aggangiato al modello.
      */
     public QueueTableModel(Object[] e, int rowCount, Vector<Splitter> vec){
         super(e, rowCount);
@@ -33,7 +34,7 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Metodo sovrascritto da DefaultTableModel.
+     * Metodo sovrascritto da {@link DefaultTableModel DefaultTableModel}.
      * Metodo usato per ottenere il numero di righe presenti attualmente.
      * @return Il numero di righe attualmente nel modello.
      */
@@ -45,7 +46,7 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Metodo per ottenere il numero di colonne nel modello.
+     * Metodo per ottenere il numero di colonne del modello.
      * @return Numero di colonne nella tabella.
      */
     @Override
@@ -64,7 +65,7 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Metodo per ottenere la classe delle colonna dato l'indice di essa.
+     * Metodo per ottenere la classe delle colonne dato l'indice di essa.
      * @param columnIndex Indice della colonna di cui si vuole sapere la classe.
      * @return Classe della colonna che si è richiesta.
      */
@@ -74,7 +75,7 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Metodo per dire se una cella è editabile o no a seconda della colonna.
+     * Metodo per dire se una cella è editabile o no a seconda della colonna e della riga.
      * @param rowIndex Indice della riga da controllare.
      * @param columnIndex Indice della colonna da controllare.
      * @return Restituisce true nel caso sia editabile, false altrimenti.
@@ -116,6 +117,7 @@ public class QueueTableModel extends DefaultTableModel {
      * Metodo usato per aggiornare il valore della colonna contenente la JProgressBar.
      * @param index Indice del file di cui c'è da aggiornare lo stato.
      * @param newValue Nuovo valore da inserire nella cella.
+     * @see javax.swing.JProgressBar
      */
     public void updateStatus(int index, int newValue) {
         if(v.elementAt(index) != null){

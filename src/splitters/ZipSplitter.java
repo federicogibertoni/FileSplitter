@@ -12,6 +12,8 @@ import static utils.Const.*;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer e comprime tutte le partizioni create.
+ * È sottoclasse di {@link Splitter Splitter}.
+ * @see Runnable
  */
 public class ZipSplitter extends Splitter implements Runnable {
 
@@ -21,7 +23,8 @@ public class ZipSplitter extends Splitter implements Runnable {
     private int dimPar;
 
     /**
-     * Costruttore dello Splitter. Chiamato in fase di divisione.
+     * Costruttore dello Splitter.
+     * Chiamato in fase di divisione alla chiusura del {@link gui.SettingsDialog SettingDialog}.
      * @param f File da dividere.
      * @param split true se il file è da dividere, false se è da unire.
      * @param dimPar Dimensione di ogni parte.
@@ -34,7 +37,8 @@ public class ZipSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Costruttore dello Splitter. Chiamato in fase di unione.
+     * Costruttore dello Splitter.
+     * Chiamato in fase di unione da UnioneActionListener, contenuto in {@link gui.MainPanel MainPanel}.
      * @param f File da dividere.
      * @param split true se il file è da dividere, false se è da unire.
      */
@@ -43,25 +47,25 @@ public class ZipSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Ritorna la dimensione di ogni parte dello split.
-     * @return Dimensione, uguale per ogni file.
+     * Ritorna la dimensione di ogni parte del file diviso.
+     * @return La dimensione di ogni parte.
      */
     public int getDimPar() {
         return dimPar;
     }
 
     /**
-     * Metodo che implementa la divisione di file in dimensioni uguali(tranne l'ultimo) tramite un buffer.
+     * Metodo che implementa la divisione di file tramite un buffer.
      * I file creati vengono tutti compressi tramite l'utilizzo di un ZipOutputStream.
+     * @see ZipOutputStream
      */
     public void split() {
         assert startFile.exists();              //controllo che il file esista altrimenti termino l'esecuzione
 
         String outputFile = startFile.getName()+"1"+SPLIT_EXTENSION;    //nome della prima ZipEntry
 
-        int c = 1, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
-
-        byte[] buf = new byte[dimBuf];
+        int c = 1, dimParTmp = dimPar;
+        byte[] buf = new byte[DIM_MAX_BUF];
 
         FileInputStream fis = null;
         ZipOutputStream zos = null;
@@ -110,7 +114,7 @@ public class ZipSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finished = true;
+        finished = true;                //imposto lo stato a finito
     }
 
     /**
@@ -126,10 +130,10 @@ public class ZipSplitter extends Splitter implements Runnable {
         }
 
         //nome del file ricostruito
-        String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf(".")-1);;
+        String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf(".")-1);
 
-        int c = 1, dimBuf = DIM_MAX_BUF;
-        byte[] buf = new byte[dimBuf];
+        int c = 1;
+        byte[] buf = new byte[DIM_MAX_BUF];
 
         //creo il file che verrà ricostruito
         File out = new File(nomeFileFinale);
@@ -153,7 +157,7 @@ public class ZipSplitter extends Splitter implements Runnable {
             try {
                 zis.getNextEntry();     //ottengo la prima ZipEntry
                 while ((length = zis.read(buf, 0, buf.length)) >= 0) {
-                    fos.write(buf, 0, length);                     //scrivi
+                    fos.write(buf, 0, length);              //scrivo nel file ricostruito
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -176,7 +180,7 @@ public class ZipSplitter extends Splitter implements Runnable {
         } catch(IOException e){
             e.printStackTrace();
         }
-        finished = true;
+        finished = true;                //imposto lo stato a finito e lo comunico
         JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
     }
 }

@@ -16,6 +16,8 @@ import java.security.*;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer e li cripta con una chiave chiesta all'utente.
+ * È sottoclasse di {@link Splitter Splitter}.
+ * @see Runnable
  */
 public class CryptoSplitter extends Splitter implements Runnable {
 
@@ -30,7 +32,8 @@ public class CryptoSplitter extends Splitter implements Runnable {
     private String pass;
 
     /**
-     * Costruttore dello Splitter. Chiamato in fase di divisione.
+     * Costruttore dello Splitter.
+     * Chiamato in fase di divisione alla chiusura del {@link gui.SettingsDialog SettingDialog}.
      * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param pass Password con cui verrà gestito il file.
@@ -44,29 +47,14 @@ public class CryptoSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Costruttore dello Splitter. Chiamato in fase di unione.
+     * Costruttore dello Splitter.
+     * Chiamato in fase di unione da UnioneActionListener, contenuto in {@link gui.MainPanel MainPanel}.
      * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param pass Password con cui verrà gestito il file.
      */
     public CryptoSplitter(File f, boolean split, String pass){
         super(f, split, "");
-        this.pass = pass;
-    }
-
-    /**
-     * Metodo per ottenere la password attuale
-     * @return Una String contenente la password.
-     */
-    public String getPass() {
-        return pass;
-    }
-
-    /**
-     * Metodo per modificare la password.
-     * @param pass Nuova password da inserire.
-     */
-    public void setPass(String pass) {
         this.pass = pass;
     }
 
@@ -79,9 +67,13 @@ public class CryptoSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Metodo che implementa la divisione di file in dimensioni uguali(tranne l'ultimo) tramite un buffer
-     * e scrive i file divisi criptati con una password chiesta da utente.
-     * L'IV usato nel cipher è scritto nella prima parte del primo file, in chiaro.
+     * Metodo che implementa la divisione del file tramite un buffer
+     * e scrive i file divisi criptandoli con una password chiesta da utente.
+     * L'IV usato nel Cipher è scritto nella prima parte del primo file, in chiaro.
+     * @see Cipher
+     * @see IvParameterSpec
+     * @see SecureRandom
+     * @see Key
      */
     public void split() {
         assert startFile.exists();               //controllo che il file esista altrimenti termino l'esecuzione
@@ -91,7 +83,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         Key key = null;
 
         byte[] digestedPass = MD5(pass);           //faccio l'hash a 128 bit della password dell'utente
-        key = new SecretKeySpec(digestedPass,0,digestedPass.length, "AES");     //creo una chiave
+        key = new SecretKeySpec(digestedPass,0,digestedPass.length, "AES");     //creo una chiave per l'algoritmo AES
 
         SecureRandom srGen = new SecureRandom();
         byte[] iv = new byte[16];
@@ -116,10 +108,10 @@ public class CryptoSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
-        int c = 1, dimBuf = DIM_MAX_BUF, dimParTmp = dimPar;
-        byte[] buf = new byte[dimBuf];
+        int c = 1, dimParTmp = dimPar;
+        byte[] buf = new byte[DIM_MAX_BUF];
         try {
-            fos.write(iv);              //scrivo l'IV all'inizio del file per salvarlo
+            fos.write(iv);              //scrivo l'IV all'inizio del file per salvarlo e riprenderlo in unione
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -164,6 +156,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
      * Metodo che implementa la ricostruzione del file precedentemente criptato con password indicata da utente.
      */
     public void merge() {
+        //genero la password criptata
         byte[] digestedPass = MD5(pass);
         Key key = new SecretKeySpec(digestedPass, 0, digestedPass.length, "AES");
         //creo la chiave
@@ -201,8 +194,8 @@ public class CryptoSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        int dimBuf = DIM_MAX_BUF, c = 1;
-        byte[] buf = new byte[dimBuf];
+        int c = 1;
+        byte[] buf = new byte[DIM_MAX_BUF];
 
         String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf(".")-1);;
 
@@ -216,10 +209,10 @@ public class CryptoSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
+        int length = 0;
         while (attuale.exists()) {
             try {
                 //ciclo di lettura e decifratura
-                int length = 0;
                 while ((length = cis.read(buf, 0, buf.length)) >= 0)
                     fos.write(buf, 0, length);
             } catch (IOException e) {
@@ -243,7 +236,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finished = true;
+        finished = true;                //imposto lo stato a finito e lo comunico
         JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
     }
 }
