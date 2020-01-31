@@ -128,15 +128,6 @@ public class MainPanel extends JPanel {
         }
     }
 
-    /*
-    * https://stackoverflow.com/questions/20260372/swingworker-progressbar
-    * https://docs.oracle.com/javase/7/docs/api/javax/swing/SwingWorker.html#publish(V...)
-    * http://www.herongyang.com/Swing/SwingWorker-Example-using-JProgressBar.html
-    * https://docs.oracle.com/javase/7/docs/api/javax/swing/table/TableCellRenderer.html
-    *
-    * https://stackoverflow.com/questions/13753562/adding-progress-bar-to-each-table-cell-for-file-progress-java
-    */
-
     /**
      * Classe per effettuare la divisione dei file su thread paralleli e nel frattempo aggiornare la grafica della tabella.
      * Fa uso di uno SwingWorker per gestire i thread.
@@ -338,31 +329,62 @@ public class MainPanel extends JPanel {
             chooser.setMultiSelectionEnabled(false);
             //l'unione inizia solo se un file è selezionato
             if(chooser.showDialog(getParent(), "Apri") == JFileChooser.APPROVE_OPTION) {
-                File att = chooser.getSelectedFile();
-
-                Thread t = null;
-                switch (att.getName().substring(att.getName().lastIndexOf("."), att.getName().length())) {
-                    case ".crypto":
-                        PasswordMergeDialog dialog = new PasswordMergeDialog();
-                        dialog.pack();
-                        dialog.setLocation(0, 0);
-                        dialog.setLocationRelativeTo(null);
-                        dialog.setVisible(true);
-
-                        //controllo che il campo password sia stato inserito
-                        if (dialog.getState())
-                            t = new Thread(new CryptoSplitter(att, false, new String(dialog.getPassValue().getPassword())));
-                        break;
-                    case ".zip":
-                        t = new Thread(new ZipSplitter(att, false));
-                        break;
-                    case ".par":
-                        t = new Thread(new BufferedSplitter(att, false));
-                        break;
-                }
-                if (t != null)
-                    t.start();
+                new UnioneWorker(chooser.getSelectedFile()).execute();
             }
+        }
+    }
+
+    /**
+     * Classe per effettuare l'unione delle parti di un file su un thread parallelo.
+     * Fa uso di uno SwingWorker per gestire i thread.
+     * @see SwingWorker
+     */
+    private class UnioneWorker extends SwingWorker<Boolean, Integer>{
+
+        /**
+         * File iniziale da cui far partire l'unione.
+         */
+        private File fileDaUnire;
+
+        /**
+         * Costruttore del Worker.
+         * @param daUnire File da unire alle altre sue parti.
+         */
+        public UnioneWorker(File daUnire){
+            fileDaUnire = daUnire;
+        }
+
+        /**
+         * Metodo usato per eseguire in background l'unione dei file.
+         * Prima il metodo capisce in che modo è stato diviso il file e infine fa partire l'esecuzione.
+         * @return Ritorna il valore sullo stato dell'esecuzione del thread parallelo, se è finito con successo o meno.
+         */
+        @Override
+        protected Boolean doInBackground(){
+            Thread t = null;
+            switch (fileDaUnire.getName().substring(fileDaUnire.getName().lastIndexOf("."), fileDaUnire.getName().length())) {
+                case ".crypto":
+                    PasswordMergeDialog dialog = new PasswordMergeDialog();
+                    dialog.pack();
+                    dialog.setLocation(0, 0);
+                    dialog.setLocationRelativeTo(null);
+                    dialog.setVisible(true);
+
+                    //controllo che il campo password sia stato inserito
+                    if (dialog.getState())
+                        t = new Thread(new CryptoSplitter(fileDaUnire, false, new String(dialog.getPassValue().getPassword())));
+                    break;
+                case ".zip":
+                    t = new Thread(new ZipSplitter(fileDaUnire, false));
+                    break;
+                case ".par":
+                    t = new Thread(new BufferedSplitter(fileDaUnire, false));
+                    break;
+            }
+            if (t != null)
+                t.start();
+
+            return true;
         }
     }
 
@@ -396,6 +418,7 @@ public class MainPanel extends JPanel {
             return this;
         }
     }
+
 
     /**
      * Costruttore del pannello che inizializza la tabella e aggiunge i bottoni.
