@@ -339,7 +339,7 @@ public class MainPanel extends JPanel {
      * Fa uso di uno SwingWorker per gestire i thread.
      * @see SwingWorker
      */
-    private class UnioneWorker extends SwingWorker<Boolean, Integer>{
+    private class UnioneWorker extends SwingWorker<Boolean, Void>{
 
         /**
          * File iniziale da cui far partire l'unione.
