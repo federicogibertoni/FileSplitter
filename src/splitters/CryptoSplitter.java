@@ -12,6 +12,8 @@ import javax.swing.*;
 
 import java.io.*;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.*;
 
 /**
@@ -177,13 +179,13 @@ public class CryptoSplitter extends Splitter implements Runnable {
         try {
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(iv));
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
         } catch (InvalidKeyException e) {
             e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
         } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
             e.printStackTrace();
         }
 
@@ -216,8 +218,20 @@ public class CryptoSplitter extends Splitter implements Runnable {
                 while ((length = cis.read(buf, 0, buf.length)) >= 0)
                     fos.write(buf, 0, length);
             } catch (IOException e) {
-                e.printStackTrace();
+                //do il messaggio d'errore
+                JOptionPane.showMessageDialog(null, PASSWORD_ERROR_MESSAGE, TITLE_FIELD_ERROR_MESSAGE, JOptionPane.ERROR_MESSAGE);
+
+                try {
+                    cis.close();                    //chiudo gli stream
+                    fos.close();
+
+                    Files.deleteIfExists(Paths.get(nomeFileFinale));//cancello il nuovo file creato se la password è sbagliata
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+                return;
             }
+
             //prossima parte da leggere
             attuale = new File(nomeFile + (++c) + SPLIT_EXTENSION + CRYPT_EXTENSION);
             try {

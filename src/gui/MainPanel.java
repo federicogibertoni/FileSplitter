@@ -108,23 +108,24 @@ public class MainPanel extends JPanel {
             //il filechooser mi fa scegliere più file da aggiungere
             JFileChooser chooser = new JFileChooser();
             chooser.setMultiSelectionEnabled(true);
-            chooser.showDialog(getParent(), "Apri");
-            File[] scelte = chooser.getSelectedFiles();
+            if(chooser.showDialog(getParent(), "Apri") == JFileChooser.APPROVE_OPTION) {
+                File[] scelte = chooser.getSelectedFiles();
 
-            //per ogni file apro un dialog
-            for(File att : scelte){
-                SettingsDialog dialog = new SettingsDialog(att);
-                dialog.pack();
-                dialog.setLocation(0, 0);
-                dialog.setLocationRelativeTo(null);
-                dialog.setVisible(true);
+                //per ogni file apro un dialog
+                for (File att : scelte) {
+                    SettingsDialog dialog = new SettingsDialog(att);
+                    dialog.pack();
+                    dialog.setLocation(0, 0);
+                    dialog.setLocationRelativeTo(null);
+                    dialog.setVisible(true);
 
-                //se tutti i campi sono completi allora lo aggiungo alla tabella
-                if(dialog.getState())
-                    addElementToVector(att, dialog);
+                        //se tutti i campi sono completi allora lo aggiungo alla tabella
+                    if (dialog.getState())
+                        addElementToVector(att, dialog);
+                }
+                //aggiorno la tabella
+                data.fireTableDataChanged();
             }
-            //aggiorno la tabella
-            data.fireTableDataChanged();
         }
     }
 

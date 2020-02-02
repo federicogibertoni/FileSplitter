@@ -58,4 +58,9 @@ public class Const {
      * Stringa per avvisare che è finita l'unione del file selezionato per la ricomposizione.
      */
     public static final String FINISHED_MERGE_MESSAGE = "Finita l'unione del file.";
+
+    /**
+     * Stringa per avvisare che la password inserita in fase di decrypt è errata.
+     */
+    public static final String PASSWORD_ERROR_MESSAGE = "Password errata!";
 }
