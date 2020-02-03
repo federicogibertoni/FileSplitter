@@ -10,7 +10,6 @@ import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.util.List;
 import java.util.Vector;
@@ -180,12 +179,15 @@ public class MainPanel extends JPanel {
          */
         @Override
         protected void process(List<Integer> chunks){
-            data.updateStatus(index, chunks.get(0));
+            //vado ad aggiornare con l'ultimo valore della lista perché
+            //più chiamate vicine di publish() risultano in una sola chiamata di
+            //process con l'ultimo valore nella lista delle chiamate
+            data.updateStatus(index, chunks.get(chunks.size()-1));
         }
 
         /**
-         * Metodo invocato alla fine di {@link #doInBackground() doInBackground()}. Si occupa di capire se lo StartWorker
-         * appena terminato era l'ultimo e nel caso riabilita i bottoni della gui.
+         * Metodo invocato alla fine di {@link #doInBackground() doInBackground()}.
+         * Si occupa di capire se lo StartWorker appena terminato era l'ultimo e nel caso riabilita i bottoni della gui.
          */
         @Override
         protected void done(){
@@ -253,12 +255,12 @@ public class MainPanel extends JPanel {
          */
         @Override
         public void actionPerformed(ActionEvent e) {
-            int[] a = tab.getSelectedRows();
+            int[] a = tab.getSelectedRows();            //ottengo tutte le righe selezionate
             if(a.length != 0){
-                for (int i = a.length-1; i>=0; i--){
-                    v.remove(a[i]);
+                for (int i = a.length-1; i>=0; i--){    //scorro all'indietro per evitare "shift" di valori
+                    v.remove(a[i]);                     //li rimuovo dal vettore
                 }
-                data.fireTableDataChanged();
+                data.fireTableDataChanged();            //aggiorno la tabella
             }
         }
     }
@@ -363,6 +365,7 @@ public class MainPanel extends JPanel {
         @Override
         protected Boolean doInBackground(){
             Thread t = null;
+            //deve scegliere che tipo di unione avviare a seconda dell'estensione
             switch (fileDaUnire.getName().substring(fileDaUnire.getName().lastIndexOf("."), fileDaUnire.getName().length())) {
                 case ".crypto":
                     PasswordMergeDialog dialog = new PasswordMergeDialog();
@@ -383,7 +386,7 @@ public class MainPanel extends JPanel {
                     break;
             }
             if (t != null)
-                t.start();
+                t.start();          //avvio il thread creato
 
             return true;
         }
@@ -396,7 +399,7 @@ public class MainPanel extends JPanel {
      */
     private class ProgressCellRender extends JProgressBar implements TableCellRenderer {
         /**
-         * Metodo che crea la JProgressBar con un certo valore iniziale oppure con un valore passato.
+         * Metodo che crea e aggiorna la JProgressBar con un certo valore indicato.
          * @param table La tabella su cui si sta lavorando.
          * @param value Il valore del campo da aggiornare.
          * @param isSelected Valore per capire se la cella è selezionata.
@@ -407,7 +410,7 @@ public class MainPanel extends JPanel {
          */
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            setStringPainted(true);
+            setStringPainted(true);             //percentuale nella progress bar
             int progress = 0;
             if (value instanceof Double) {
                 progress = (int) Math.round(((Double) value));

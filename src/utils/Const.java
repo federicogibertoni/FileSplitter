@@ -45,22 +45,23 @@ public class Const {
     public static final String MERGE_EXTENSION = "_merge";
 
     /**
+     * Titolo del JOptionPane che mostra l'errore nell'inserimento dei dati nei campi.
+     */
+    public static final String TITLE_FIELD_ERROR_MESSAGE = "Errore nell'input";
+
+    /**
      * Stringa di errore mostrata nel caso non siano riempiti i campi necessari nel {@link gui.SettingsDialog}.
      */
     public static final String FIELD_ERROR_MESSAGE = "I campi richiesti non sono stati riempiti!";
 
     /**
-     * Titolo del JOptionPane che mostra l'errore nell'inserimento dei dati nei campi.
+     * Stringa per avvisare che la password inserita in fase di decrypt è errata.
      */
-    public static final String TITLE_FIELD_ERROR_MESSAGE = "Errore nell'input";
+    public static final String PASSWORD_ERROR_MESSAGE = "Password errata!";
 
     /**
      * Stringa per avvisare che è finita l'unione del file selezionato per la ricomposizione.
      */
     public static final String FINISHED_MERGE_MESSAGE = "Finita l'unione del file.";
 
-    /**
-     * Stringa per avvisare che la password inserita in fase di decrypt è errata.
-     */
-    public static final String PASSWORD_ERROR_MESSAGE = "Password errata!";
 }
