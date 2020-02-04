@@ -114,7 +114,6 @@ public class ZipSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finished = true;                //imposto lo stato a finito
     }
 
     /**
@@ -180,7 +179,7 @@ public class ZipSplitter extends Splitter implements Runnable {
         } catch(IOException e){
             e.printStackTrace();
         }
-        finished = true;                //imposto lo stato a finito e lo comunico
+                        //comunico la fine
         JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
     }
 }

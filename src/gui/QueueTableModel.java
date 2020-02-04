@@ -121,31 +121,11 @@ public class QueueTableModel extends DefaultTableModel {
     /**
      * Metodo usato per aggiornare il valore della colonna contenente la JProgressBar.
      * @param index Indice del file di cui c'è da aggiornare lo stato.
-     * @param newValue Nuovo valore da inserire nella cella.
      * @see javax.swing.JProgressBar
      */
-    public void updateStatus(int index, int newValue) {
+    public void updateStatus(int index) {
         if(v.elementAt(index) != null){
-            //setValueAt(newValue, index, PROGRESS_BAR_COLUMN);
             fireTableCellUpdated(index, PROGRESS_BAR_COLUMN);
         }
     }
-    /*
-    /**
-     * Sovrascrive {@link DefaultTableModel#setValueAt(Object, int, int)  DefaultTableModel.setValueAt(Object, int, int)}.
-     * Metodo per aggiornare i valori della tabella.
-     * @param value Nuovo valore da impostare.
-     * @param rowIndex Riga da aggiornare.
-     * @param columnIndex Colonna da aggiornare.
-     *
-    @Override
-    public void setValueAt(Object value, int rowIndex, int columnIndex) {
-        switch (columnIndex) {
-            case PROGRESS_BAR_COLUMN:
-                if (value instanceof Double) {
-                    v.elementAt(rowIndex).setProgress((double) value);
-                }
-                break;
-        }
-    }*/
 }

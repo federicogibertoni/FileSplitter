@@ -31,7 +31,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
 
     /**
      * Costruttore dello splitter nel caso in cui sia specificata una dimensione massima dei file.
-     * Chiamato in fase di divisone alla chiusura del {@link gui.SettingsDialog SettingDialog}.
+     * Chiamato in fase di divisione alla chiusura del {@link gui.SettingsDialog SettingDialog}.
      * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param dimPar Dimensione di ogni parte.
@@ -45,7 +45,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
 
     /**
      * Costruttore dello splitter nel caso in cui sia specificato il numero massimo di file da ottenere.
-     * Chiamato in fase di divisone alla chiusura del {@link gui.SettingsDialog SettingDialog}.
+     * Chiamato in fase di divisione alla chiusura del {@link gui.SettingsDialog SettingDialog}.
      * @param f File da cui iniziare.
      * @param split true se il file è da dividere, false se è da unire.
      * @param numPar Numero massimo di file da generare.
@@ -84,7 +84,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Metodo per ottenre il numero di parti in cui dividere il file.
+     * Metodo per ottenere il numero di parti in cui dividere il file.
      * @return Numero di parti in cui il file va diviso.
      */
     public long getnParti() {
@@ -140,7 +140,6 @@ public class BufferedSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finished = true;                //imposto lo stato a finito.
     }
 
     /**
@@ -201,7 +200,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        finished = true;            //imposto lo stato a finito e lo comunico
+        //comunico la fine
         JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
     }
 }

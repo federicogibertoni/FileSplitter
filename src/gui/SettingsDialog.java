@@ -26,7 +26,7 @@ public class SettingsDialog extends JDialog {
      */
     private JButton buttonOK;
     /**
-     * Bottone per annullare l'inserimento dei dati inseriti.
+     * Bottone per annullare l'inserimento chiudendo il dialog.
      */
     private JButton buttonCancel;
     /**

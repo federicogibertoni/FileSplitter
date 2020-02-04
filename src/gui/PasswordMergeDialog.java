@@ -57,17 +57,6 @@ public class PasswordMergeDialog extends JDialog {
     }
 
     /**
-     * Metodo privato per aggiungere tutte le istanze create al pannello del Dialog.
-     */
-    private void addComponents(){
-        add(passLabel);
-        add(passValue);
-
-        add(buttonOK);
-        add(buttonCancel);
-    }
-
-    /**
      * Metodo privato che imposta il layout per tutto il dialog.
      * Fa uso di un {@link GroupLayout GroupLayout}.
      */

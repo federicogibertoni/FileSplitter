@@ -179,10 +179,7 @@ public class MainPanel extends JPanel {
          */
         @Override
         protected void process(List<Integer> chunks){
-            //vado ad aggiornare con l'ultimo valore della lista perché
-            //più chiamate vicine di publish() risultano in una sola chiamata di
-            //process con l'ultimo valore nella lista delle chiamate
-            data.updateStatus(index, chunks.get(chunks.size()-1));
+            data.updateStatus(index);
         }
 
         /**

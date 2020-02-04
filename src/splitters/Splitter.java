@@ -20,11 +20,6 @@ public abstract class Splitter implements Runnable{
     protected double progress = 0;
 
     /**
-     * Attributo per controllare se la divisione del file è finita o meno.
-     */
-    protected boolean finished = false;
-
-    /**
      * Valore booleano per capire che cosa fare col file, se dividerlo o unirlo alle altre parti.
      */
     protected boolean split = true;
@@ -55,14 +50,6 @@ public abstract class Splitter implements Runnable{
     }
 
     /**
-     * Metodo che setta il valore del progresso nella divisione del file.
-     * @param progress Valore attuale del progresso.
-     */
-    public void setProgress(double progress) {
-        this.progress = progress;
-    }
-
-    /**
      * Metodo per ottenere il file su cui lavorare.
      * @return File da dividere.
      */
@@ -76,22 +63,6 @@ public abstract class Splitter implements Runnable{
      */
     public String getFinalDirectory() {
         return finalDirectory;
-    }
-
-    /**
-     * Metodo per impostare la directory dove andrà il file diviso.
-     * @param finalDirectory Directory in cui mettere i file divisi.
-     */
-    public void setFinalDirectory(String finalDirectory) {
-        this.finalDirectory = finalDirectory;
-    }
-
-    /**
-     * Metodo per controllare lo stato della divisione, se è finita o meno.
-     * @return true se la divisione è finita, false altrimenti.
-     */
-    public boolean isFinished() {
-        return finished;
     }
 
     /**
