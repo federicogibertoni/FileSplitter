@@ -11,22 +11,27 @@ import static utils.Const.TITLE_FIELD_ERROR_MESSAGE;
  * Sottoclasse di {@link JDialog JDialog}
  */
 public class PasswordMergeDialog extends JDialog {
+
     /**
      * Pannello che contiene il Dialog.
      */
     private JPanel contentPane;
+
     /**
      * Bottone per dare la conferma della password inserita.
      */
     private JButton buttonOK;
+
     /**
      * Bottone per annullare l'inserimento della password.
      */
     private JButton buttonCancel;
+
     /**
-     * Campo di testo che rappresenta il valore della nuova password inserita.
+     * Campo di testo che rappresenta il valore della password inserita.
      */
     private JPasswordField passValue;
+
     /**
      * Label che indica il campo di testo dove andrà la password.
      */

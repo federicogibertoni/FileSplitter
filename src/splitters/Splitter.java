@@ -4,7 +4,7 @@ import java.io.File;
 
 /**
  * Classe astratta da cui derivano tutti gli Splitter.
- * Qui dentro è contenuto il file da dividire nei diversi modi.
+ * Qui dentro è contenuto il file da dividire con le diverse opzioni.
  * @see Runnable
  */
 public abstract class Splitter implements Runnable{
@@ -77,7 +77,7 @@ public abstract class Splitter implements Runnable{
 
     /**
      * Metodo che sovrascrive quello implementato dall'interfaccia {@link Runnable Runnable}.
-     * A seconda del valore dell'attributo split verrà eseguita la divisione o l'unione.
+     * A seconda del valore dell'attributo {@link #split split} verrà eseguita la divisione o l'unione.
      */
     @Override
     public void run(){

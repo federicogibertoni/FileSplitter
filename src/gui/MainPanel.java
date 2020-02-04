@@ -17,8 +17,9 @@ import java.util.Vector;
 import static utils.Const.*;
 
 /**
- * Classe che implementa il pannello principale della grafica.
+ * Classe che implementa il pannello principale della gui.
  * Qui sono contenuti la tabella, il suo modello e i bottoni per le funzionalità.
+ * @see JPanel
  */
 public class MainPanel extends JPanel {
     /**
@@ -59,7 +60,7 @@ public class MainPanel extends JPanel {
     private Vector<Splitter> v = new Vector<>();
 
     /**
-     * Vettore usato dagli SwingWorker per capire qual è l'ultimo e riabilitare i bottoni.
+     * Vettore usato dagli SwingWorker per capire qual è l'ultimo ad eseguire e riabilitare i bottoni.
      */
     private Vector<Boolean> completed;
 
@@ -247,7 +248,7 @@ public class MainPanel extends JPanel {
     private class EliminaActionListener implements ActionListener{
 
         /**
-         * Una volta premuto il bottone per l'eliminazione vengono tolti dalla tabella i file scelti da eliminare.
+         * Una volta premuto il bottone per l'eliminazione vengono tolti dalla tabella i file scelti.
          * @param e Evento che è stato generato.
          */
         @Override
@@ -317,7 +318,7 @@ public class MainPanel extends JPanel {
     private class UnioneActionListener implements ActionListener{
 
         /**
-         * Viene aperto un JFileChooser per permettere di scegliere il file da riunire.
+         * Viene aperto un JFileChooser per permettere di scegliere il file da unire.
          * Una volta scelto viene iniziato il processo di unione a seconda del tipo di divisione che era stata effettuata.
          * Nel caso sia richiesta una password compare un {@link PasswordMergeDialog Dialog} per inserirla.
          * @param e Evento che è stato generato.

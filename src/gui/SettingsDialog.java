@@ -86,7 +86,7 @@ public class SettingsDialog extends JDialog {
     private class ComboSelectionListener implements ActionListener{
 
         /**
-         * Implementazione del listener.
+         * Implementazione del Listener.
          * A seconda del valore della JComboBox abilita o disabilita i componenti relativi alla modalità scelta.
          * @param e Evento generato.
          */
@@ -186,7 +186,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Metodo privato che imposta il layout per tutto il dialog.
+     * Metodo privato che imposta il layout per tutto il Dialog.
      * Fa uso di un {@link GroupLayout GroupLayout}.
      */
     private void setDialogLayout(){
@@ -310,7 +310,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Costruttore del dialog chiamato in fase di modifica di un file settato con {@link BufferedSplitter BufferedSplitter}.
+     * Costruttore del dialog chiamato in fase di modifica di un file associato ad un {@link BufferedSplitter BufferedSplitter}.
      * @param tmp BufferedSplitter che sarà modificato, da cui prendo i dati da mostrare.
      */
     public SettingsDialog(BufferedSplitter tmp) {
@@ -344,7 +344,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Costruttore del dialog chiamato in fase di modifica di un file settato con {@link CryptoSplitter CryptoSplitter}.
+     * Costruttore del dialog chiamato in fase di modifica di un file associato ad un {@link CryptoSplitter CryptoSplitter}.
      * @param c CryptoSplitter che sarà modificato, da cui prendo i dati da mostrare.
      */
     public SettingsDialog(CryptoSplitter c) {
@@ -363,7 +363,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Costruttore del dialog chiamato in fase di modifica di un file settato con {@link ZipSplitter ZipSplitter}.
+     * Costruttore del dialog chiamato in fase di modifica di un file associato ad un {@link ZipSplitter ZipSplitter}.
      * @param z ZipSplitter che sarà modificato, da cui prendo i dati da mostrare.
      */
     public SettingsDialog(ZipSplitter z){
@@ -382,7 +382,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Metodo per ottenere il valore della ComboBox per la scelta della modalità.
+     * Metodo per ottenere il valore della ComboBox usata per la scelta della modalità di divisione.
      * @return L'istanza di ComboBox che rappresenta la selezione.
      */
     public JComboBox getModValue() {
@@ -411,7 +411,7 @@ public class SettingsDialog extends JDialog {
     }
 
     /**
-     * Metodo privato per controllare che i campi richiesti dal dialog nel metodo di divisione siano tutti riempiti alla sua chiusura.
+     * Metodo privato per controllare che i campi richiesti dal dialog siano tutti compilati alla sua chiusura.
      * @return true se i campi sono tutti completati, false altrimenti.
      */
     private boolean validateFields() {

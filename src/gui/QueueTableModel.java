@@ -34,8 +34,8 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Sovrascrive {@link DefaultTableModel#getRowCount() DefaultTableModel.getRowCount()}.
      * Usato per ottenere il numero di righe presenti attualmente.
+     * Sovrascrive {@link DefaultTableModel#getRowCount() DefaultTableModel.getRowCount()}.
      * @return Il numero di righe attualmente nel modello.
      */
     @Override
@@ -46,8 +46,8 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Sovrascrive {@link DefaultTableModel#getColumnCount() DefaultTableModel.getColumnCount()}.
      * Metodo per ottenere il numero di colonne del modello.
+     * Sovrascrive {@link DefaultTableModel#getColumnCount() DefaultTableModel.getColumnCount()}.
      * @return Numero di colonne nella tabella.
      */
     @Override
@@ -56,8 +56,8 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Sovrascrive {@link DefaultTableModel#getColumnName(int) DefaultTableModel.getColumnName(int)}.
      * Metodo per ottenere il nome della colonna dato l'indice di essa.
+     * Sovrascrive {@link DefaultTableModel#getColumnName(int) DefaultTableModel.getColumnName(int)}.
      * @param columnIndex Indice della colonna di cui si vuole sapere il nome.
      * @return Stringa contenente il nome della colonna.
      */
@@ -67,8 +67,8 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Sovrascrive {@link DefaultTableModel#getColumnClass(int) DefaultTableModel.getColumnClass(int)}.
      * Metodo per ottenere la classe delle colonne dato l'indice di essa.
+     * Sovrascrive {@link DefaultTableModel#getColumnClass(int) DefaultTableModel.getColumnClass(int)}.
      * @param columnIndex Indice della colonna di cui si vuole sapere la classe.
      * @return Classe della colonna che si è richiesta.
      */
@@ -78,8 +78,8 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
+     * Metodo per dire se una cella individuata da una riga e una colonna è editabile.
      * Sovrascrive {@link DefaultTableModel#isCellEditable(int, int)  DefaultTableModel.isCellEditable(int, int)}.
-     * Metodo per dire se una cella è editabile o no a seconda della colonna e della riga.
      * @param rowIndex Indice della riga da controllare.
      * @param columnIndex Indice della colonna da controllare.
      * @return Restituisce true nel caso sia editabile, false altrimenti.
@@ -90,8 +90,8 @@ public class QueueTableModel extends DefaultTableModel {
     }
 
     /**
-     * Sovrascrive {@link DefaultTableModel#getValueAt(int, int) DefaultTableModel.getValueAt(int, int)}.
      * Metodo per disegnare la tabella e i valori in ogni sua colonna.
+     * Sovrascrive {@link DefaultTableModel#getValueAt(int, int) DefaultTableModel.getValueAt(int, int)}.
      * @param rowIndex Indice della riga da cui prendere i dati.
      * @param columnIndex Indice della colonna da riempire.
      * @return Valore che andrà inserito della cella specificata.

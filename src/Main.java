@@ -8,8 +8,8 @@ import javax.swing.*;
 public class Main {
 
     /**
-     * Metodo main() da cui parte tutta l'esecuzione del programma.
-     * Qui viene creata la finestra principale e inizializzati i componenti.
+     * Metodo main() da cui parte l'esecuzione del programma.
+     * Qui viene creata la finestra principale e vengono inizializzati i componenti.
      * @param args Argomenti passati da riga di comando.
      */
     public static void main(String[] args){

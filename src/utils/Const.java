@@ -50,7 +50,7 @@ public class Const {
     public static final String TITLE_FIELD_ERROR_MESSAGE = "Errore nell'input";
 
     /**
-     * Stringa di errore mostrata nel caso non siano riempiti i campi necessari nel {@link gui.SettingsDialog}.
+     * Stringa di errore mostrata nel caso non siano riempiti i campi necessari nel {@link gui.SettingsDialog} e nel {@link gui.PasswordMergeDialog}.
      */
     public static final String FIELD_ERROR_MESSAGE = "I campi richiesti non sono stati riempiti!";
 

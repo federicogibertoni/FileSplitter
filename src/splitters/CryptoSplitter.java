@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 import java.security.*;
 
 /**
- * Classe che implementa la divisione dei file tramite l'uso di un buffer e li cripta con una chiave chiesta all'utente.
+ * Classe che implementa la divisione dei file tramite l'uso di un buffer e cripta le parti con una chiave inserita dall'utente.
  * È sottoclasse di {@link Splitter Splitter}.
  * @see Runnable
  */
@@ -61,8 +61,8 @@ public class CryptoSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Ritorna la dimensione di ogni parte dello split.
-     * @return Dimensione, uguale per ogni file.
+     * Metodo per ottenere la dimensione di ogni parte dello split.
+     * @return Dimensione di ogni parte, uguale per ogni file.
      */
     public int getDimPar() {
         return dimPar;
@@ -70,7 +70,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
 
     /**
      * Metodo che implementa la divisione del file tramite un buffer
-     * e scrive i file divisi criptandoli con una password chiesta da utente.
+     * e scrive le parti create criptandole con una password inserita da utente.
      * L'IV usato nel Cipher è scritto nella prima parte del primo file, in chiaro.
      * @see Cipher
      * @see IvParameterSpec
@@ -154,7 +154,7 @@ public class CryptoSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Metodo che implementa la ricostruzione del file precedentemente criptato con password indicata da utente.
+     * Metodo che implementa la ricostruzione del file precedentemente criptato con password inserita da utente.
      */
     public void merge() {
         //genero la password criptata

@@ -11,7 +11,7 @@ import java.util.zip.ZipOutputStream;
 import static utils.Const.*;
 
 /**
- * Classe che implementa la divisione dei file tramite l'uso di un buffer e comprime tutte le partizioni create.
+ * Classe che implementa la divisione dei file tramite l'uso di un buffer e comprime tutte le parti create.
  * È sottoclasse di {@link Splitter Splitter}.
  * @see Runnable
  */
@@ -47,7 +47,7 @@ public class ZipSplitter extends Splitter implements Runnable {
     }
 
     /**
-     * Ritorna la dimensione di ogni parte del file diviso.
+     * Ritorna la dimensione di ogni parte dei file divisi.
      * @return La dimensione di ogni parte.
      */
     public int getDimPar() {
