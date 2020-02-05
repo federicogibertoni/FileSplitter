@@ -151,9 +151,6 @@ public class ZipSplitter extends Splitter implements Runnable {
         try {
             //apro gli stream di lettura di zip e scrittura del file finale
             zis = new ZipInputStream(new FileInputStream(startFile.getCanonicalPath()));
-
-            if (!out.exists())
-                out.createNewFile();
             fos = new FileOutputStream(out);
         } catch (IOException e) {
             e.printStackTrace();
