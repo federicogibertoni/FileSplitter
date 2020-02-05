@@ -170,6 +170,20 @@ public class CryptoSplitter extends Splitter implements Runnable {
      * Metodo che implementa la ricostruzione del file precedentemente criptato con password inserita da utente.
      */
     public void merge() {
+        //nome del file originale
+        String nomeFile = null;
+        try {
+            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(SPLIT_EXTENSION) - 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //nome del file ricostruito
+        String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf(".")-1);;
+
+        //comunico l'inizio
+        JOptionPane.showMessageDialog(null, STARTED_MERGE_MESSAGE + nomeFileFinale);
+
         //genero la password criptata
         byte[] digestedPass = MD5(pass);
         Key key = new SecretKeySpec(digestedPass, 0, digestedPass.length, "AES");
@@ -201,17 +215,9 @@ public class CryptoSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
 
-        //nome del file originale
-        String nomeFile = null;
-        try {
-            nomeFile = startFile.getCanonicalPath().substring(0, startFile.getCanonicalPath().lastIndexOf(SPLIT_EXTENSION) - 1);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         int c = 1;
         byte[] buf = new byte[DIM_MAX_BUF];
 
-        String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf(".")-1);;
 
         CipherInputStream cis = null;
         FileOutputStream fos = null;
@@ -263,6 +269,6 @@ public class CryptoSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
         //comunico la fine
-        JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
+        JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE + nomeFileFinale);
     }
 }

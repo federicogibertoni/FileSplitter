@@ -162,6 +162,9 @@ public class BufferedSplitter extends Splitter implements Runnable {
         //nome del file ricostruito
         String nomeFileFinale = MyUtils.insertString(nomeFile, MERGE_EXTENSION, nomeFile.lastIndexOf(".")-1);
 
+        //comunico l'inizio
+        JOptionPane.showMessageDialog(null, STARTED_MERGE_MESSAGE + nomeFileFinale);
+
         int c = 1;
         byte[] buf = new byte[DIM_MAX_BUF];
 
@@ -206,6 +209,6 @@ public class BufferedSplitter extends Splitter implements Runnable {
             e.printStackTrace();
         }
         //comunico la fine
-        JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE);
+        JOptionPane.showMessageDialog(null, FINISHED_MERGE_MESSAGE + nomeFileFinale);
     }
 }

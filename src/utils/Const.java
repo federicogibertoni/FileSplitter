@@ -60,8 +60,14 @@ public class Const {
     public static final String PASSWORD_ERROR_MESSAGE = "Password errata!";
 
     /**
+     * Stringa per avvisare che è iniziata l'unione del file selezionato per la ricomposizione.
+     */
+    public static final String STARTED_MERGE_MESSAGE = "Iniziata l'unione del file\n";
+
+    /**
      * Stringa per avvisare che è finita l'unione del file selezionato per la ricomposizione.
      */
-    public static final String FINISHED_MERGE_MESSAGE = "Finita l'unione del file.";
+    public static final String FINISHED_MERGE_MESSAGE = "Finita l'unione del file\n";
+
 
 }
