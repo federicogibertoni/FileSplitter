@@ -82,7 +82,7 @@ public class BufferedSplitter extends Splitter implements Runnable {
 
     /**
      * Metodo per capire se il file è del tipo divisione in parti uguali o è stata specificata una dimensione massima.
-     * @return true se il file è da dividere il n parti uguali, false altrimenti.
+     * @return true se il file è da dividere con una dimensione massima per ogni file, false altrimenti.
      */
     public boolean isParti() {
         return parti;

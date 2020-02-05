@@ -1,5 +1,6 @@
 package gui;
 
+import splitters.BufferedSplitter;
 import splitters.Splitter;
 
 import javax.swing.table.DefaultTableModel;
@@ -104,7 +105,10 @@ public class QueueTableModel extends DefaultTableModel {
             case 1:
                 switch(re.getClass().getCanonicalName()){
                     case "splitters.BufferedSplitter":
-                        return "Splitter";
+                        if(((BufferedSplitter)re).isParti())
+                            return "Splitter";
+                        else
+                            return "Parts";
                     case "splitters.CryptoSplitter":
                         return "Crypto";
                     case "splitters.ZipSplitter":
