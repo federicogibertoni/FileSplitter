@@ -1,6 +1,6 @@
 import gui.MainPanel;
 
-import javax.swing.*;
+import javax.swing.JFrame;
 
 /**
  * Classe principale che contiene il metodo {@link #main(String[])}  main()}.

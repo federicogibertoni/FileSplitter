@@ -2,8 +2,13 @@ package splitters;
 
 import utils.MyUtils;
 
-import javax.swing.*;
-import java.io.*;
+import javax.swing.JOptionPane;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import static utils.Const.*;
 

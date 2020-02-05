@@ -1,6 +1,7 @@
 package utils;
 
-import java.security.*;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Classe che contiene alcune funzioni di utilità.

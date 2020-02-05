@@ -5,16 +5,29 @@ import utils.MyUtils;
 import static utils.Const.*;
 import static utils.MyUtils.*;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.swing.*;
 
-import java.io.*;
+import javax.swing.JOptionPane;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.security.*;
+
+import java.security.SecureRandom;
+import java.security.NoSuchAlgorithmException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.InvalidAlgorithmParameterException;
 
 /**
  * Classe che implementa la divisione dei file tramite l'uso di un buffer e cripta le parti con una chiave inserita dall'utente.

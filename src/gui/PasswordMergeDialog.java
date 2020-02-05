@@ -1,7 +1,20 @@
 package gui;
 
-import javax.swing.*;
-import java.awt.event.*;
+import javax.swing.JDialog;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JOptionPane;
+import javax.swing.JLabel;
+import javax.swing.JPasswordField;
+import javax.swing.GroupLayout;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import static utils.Const.FIELD_ERROR_MESSAGE;
 import static utils.Const.TITLE_FIELD_ERROR_MESSAGE;
@@ -112,6 +125,8 @@ public class PasswordMergeDialog extends JDialog {
 
         initComponents();
         setDialogLayout();
+
+        setTitle("Inserisci la password");
 
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {

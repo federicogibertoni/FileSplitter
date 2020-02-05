@@ -5,14 +5,22 @@ import splitters.CryptoSplitter;
 import splitters.Splitter;
 import splitters.ZipSplitter;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JTable;
+import javax.swing.SwingWorker;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+
 import javax.swing.table.TableCellRenderer;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 import java.util.Vector;
+
+import java.awt.Component;
 
 import static utils.Const.*;
 
